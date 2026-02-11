@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ================= BACKGROUND CIRCLE ================= -->
+    <item>
+        <shape
+            android:shape="oval">
+
+            <size
+                android:width="200dp"
+                android:height="200dp" />
+
+            <solid android:color="#1F2937" />
+        </shape>
+    </item>
+
+    <!-- ================= PROGRESS RING ================= -->
+    <item>
+        <rotate
+            android:fromDegrees="270"
+            android:toDegrees="270">
+
+            <shape
+                android:shape="ring"
+                android:useLevel="true"
+                android:thickness="14dp"
+                android:innerRadiusRatio="3">
+
+                <!-- Default color (will be tinted dynamically) -->
+                <solid android:color="#00FFAA" />
+
+            </shape>
+
+        </rotate>
+    </item>
+
+</layer-list>
