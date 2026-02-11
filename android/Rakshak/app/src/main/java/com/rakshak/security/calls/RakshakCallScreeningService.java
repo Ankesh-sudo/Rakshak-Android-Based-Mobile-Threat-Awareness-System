@@ -6,8 +6,10 @@ import android.telecom.Call;
 import android.telecom.CallScreeningService;
 import android.util.Log;
 
+import com.rakshak.security.calls.engine.CallFeatureExtractor;
 import com.rakshak.security.calls.engine.CallRiskResult;
 import com.rakshak.security.calls.engine.CallThreatEngine;
+import com.rakshak.security.core.ml.CloudCallClassifier;
 
 public class RakshakCallScreeningService extends CallScreeningService {
 
@@ -22,19 +24,15 @@ public class RakshakCallScreeningService extends CallScreeningService {
 
             Log.d(TAG, "Incoming call detected");
 
-            if (callDetails == null) {
-                return;
-            }
+            if (callDetails == null) return;
 
             Uri handle = callDetails.getHandle();
-
             if (handle == null) {
                 allowCall(callDetails);
                 return;
             }
 
             String number = handle.getSchemeSpecificPart();
-
             if (number == null || number.trim().isEmpty()) {
                 allowCall(callDetails);
                 return;
@@ -43,47 +41,97 @@ public class RakshakCallScreeningService extends CallScreeningService {
             Log.d(TAG, "Incoming Number: " + number);
 
             // ===============================
-            // Evaluate Risk
+            // STEP 1 — Heuristic Evaluation
             // ===============================
-            CallRiskResult result =
+            CallRiskResult heuristicResult =
                     CallThreatEngine.evaluate(this, number);
 
-            Log.d(TAG, "Risk Score: " + result.getRiskScore());
-            Log.d(TAG, "Threat Level: " + result.getThreatLevel());
+            int baseScore = heuristicResult.getRiskScore();
 
-            CallResponse.Builder response = new CallResponse.Builder();
+            Log.d(TAG, "Heuristic Score: " + baseScore);
 
-            switch (result.getThreatLevel()) {
-
-                case HIGH_RISK:
-                case SPAM:
-
-                    Log.d(TAG, "Blocking call");
-
-                    response.setDisallowCall(true)
-                            .setRejectCall(true)
+            // ===============================
+            // ALWAYS ALLOW CALL IMMEDIATELY
+            // ===============================
+            CallResponse.Builder response =
+                    new CallResponse.Builder()
+                            .setDisallowCall(false)
                             .setSkipCallLog(false)
                             .setSkipNotification(false);
-                    break;
-
-                case SUSPICIOUS:
-
-                    Log.d(TAG, "Suspicious call — sending broadcast");
-
-                    response.setDisallowCall(false);
-                    sendWarningBroadcast(number, result.getRiskScore());
-                    break;
-
-                case SAFE:
-                default:
-
-                    Log.d(TAG, "Safe call — allowing");
-
-                    response.setDisallowCall(false);
-                    break;
-            }
 
             respondToCall(callDetails, response.build());
+
+            // ===============================
+            // STEP 2 — REAL FEATURE EXTRACTION
+            // ===============================
+
+            int callFrequency =
+                    CallFeatureExtractor.getCallFrequency(this, number);
+
+            int callDuration =
+                    CallFeatureExtractor.getAverageCallDuration(this, number);
+
+            int nightCall =
+                    CallFeatureExtractor.isNightCall();
+
+            int unknownNumber =
+                    CallFeatureExtractor.isUnknownNumber(this, number);
+
+            int shortCalls =
+                    CallFeatureExtractor.getShortCallCount(this, number);
+
+            Log.d(TAG, "Features → Freq: " + callFrequency +
+                    ", AvgDur: " + callDuration +
+                    ", Night: " + nightCall +
+                    ", Unknown: " + unknownNumber +
+                    ", ShortCalls: " + shortCalls);
+
+            // ===============================
+            // STEP 3 — ML Prediction
+            // ===============================
+            CloudCallClassifier.predictCall(
+                    callFrequency,
+                    callDuration,
+                    nightCall,
+                    unknownNumber,
+                    shortCalls,
+                    new CloudCallClassifier.CallPredictionCallback() {
+
+                        @Override
+                        public void onResult(float probability) {
+
+                            Log.d(TAG, "ML Probability: " + probability);
+
+                            int finalScore = baseScore;
+
+                            if (probability > 0.9f) {
+                                finalScore += 60;
+                            } else if (probability > 0.75f) {
+                                finalScore += 40;
+                            } else if (probability > 0.6f) {
+                                finalScore += 20;
+                            }
+
+                            Log.d(TAG, "Final Score After ML: " + finalScore);
+
+                            // ⚠️ Only show warning — NEVER BLOCK
+                            if (finalScore >= 50) {
+                                sendWarningBroadcast(number, finalScore);
+                            }
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                            Log.e(TAG, "ML Error: " + error);
+
+                            // Fallback to heuristic only
+                            if (baseScore >= 50) {
+                                sendWarningBroadcast(number, baseScore);
+                            }
+                        }
+                    }
+            );
 
         } catch (Exception e) {
 
@@ -103,10 +151,6 @@ public class RakshakCallScreeningService extends CallScreeningService {
                         .build());
     }
 
-    /**
-     * Instead of starting Activity directly,
-     * send broadcast. Much safer.
-     */
     private void sendWarningBroadcast(String number, int score) {
 
         Intent intent = new Intent(ACTION_SHOW_WARNING);

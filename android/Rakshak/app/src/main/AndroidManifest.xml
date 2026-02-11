@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ================================================= -->
-    <!-- INTERNET -->
+    <!-- INTERNET (For ML Backend Communication) -->
     <!-- ================================================= -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -28,7 +28,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <!-- ================================================= -->
-    <!-- STORAGE (Scoped Safe) -->
+    <!-- STORAGE (Scoped Storage Compatible) -->
     <!-- ================================================= -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -49,18 +49,6 @@
     <!-- PACKAGE VISIBILITY -->
     <!-- ================================================= -->
     <queries>
-
-        <intent>
-            <action android:name="android.intent.action.MAIN" />
-        </intent>
-
-        <intent>
-            <action android:name="android.intent.action.OPEN_DOCUMENT" />
-        </intent>
-
-        <intent>
-            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
-        </intent>
 
         <intent>
             <action android:name="android.intent.action.SEND" />
@@ -105,15 +93,12 @@
         <activity
             android:name=".ui.SecurityDashboardActivity"
             android:exported="false"
-            android:label="Security Dashboard"
-            android:theme="@style/Theme.Rakshak" />
+            android:label="Security Dashboard" />
 
-        <!-- ================= RISK HISTORY ================= -->
         <activity
             android:name=".ui.RiskHistoryActivity"
             android:exported="false"
-            android:label="Risk History"
-            android:theme="@style/Theme.Rakshak" />
+            android:label="Risk History" />
 
         <!-- ================= CALL PROTECTION ================= -->
 
@@ -164,55 +149,6 @@
 
         <activity
             android:name=".sms.SmsWarningActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Rakshak" />
-
-        <!-- ================= CHATBOT ================= -->
-
-        <activity
-            android:name=".chatbot.ChatActivity"
-            android:exported="false"
-            android:label="Rakshak AI Assistant" />
-
-        <!-- ================= HEALTH ================= -->
-
-        <activity
-            android:name=".health.HealthDashboardActivity"
-            android:exported="false"
-            android:label="Phone Health" />
-
-        <activity
-            android:name=".health.ThreatListActivity"
-            android:exported="false"
-            android:label="Detected Threats" />
-
-        <!-- ================= FILE SCAN ================= -->
-
-        <activity
-            android:name=".filescanner.FileScanActivity"
-            android:exported="true"
-            android:label="Scan with Rakshak">
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
-            </intent-filter>
-
-        </activity>
-
-        <activity
-            android:name=".filescanner.FolderScanResultActivity"
-            android:exported="false" />
-
-        <!-- ================= PERMISSIONS ================= -->
-
-        <activity
-            android:name=".permissions.PermissionDashboardActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".permissions.PermissionEducationActivity"
             android:exported="false" />
 
         <!-- ================= LINK SCANNER ================= -->
@@ -243,6 +179,51 @@
 
         <activity
             android:name=".linkscanner.LinkResultActivity"
+            android:exported="false" />
+
+        <!-- ================= FILE SCAN ================= -->
+
+        <activity
+            android:name=".filescanner.FileScanActivity"
+            android:exported="true"
+            android:label="Scan with Rakshak">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".filescanner.FolderScanResultActivity"
+            android:exported="false" />
+
+        <!-- ================= HEALTH ================= -->
+
+        <activity
+            android:name=".health.HealthDashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".health.ThreatListActivity"
+            android:exported="false" />
+
+        <!-- ================= PERMISSIONS ================= -->
+
+        <activity
+            android:name=".permissions.PermissionDashboardActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".permissions.PermissionEducationActivity"
+            android:exported="false" />
+
+        <!-- ================= CHATBOT ================= -->
+
+        <activity
+            android:name=".chatbot.ChatActivity"
             android:exported="false" />
 
         <!-- ================= OVERLAY SERVICE ================= -->
