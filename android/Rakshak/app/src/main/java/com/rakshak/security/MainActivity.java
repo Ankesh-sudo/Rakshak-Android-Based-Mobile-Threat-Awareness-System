@@ -25,6 +25,7 @@ import com.rakshak.security.filescanner.FolderScanResultActivity;
 import com.rakshak.security.filescanner.FolderScanner;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
+import com.rakshak.security.health.HealthDashboardActivity; // ✅ NEW IMPORT
 
 public class MainActivity extends AppCompatActivity {
 
@@ -89,24 +90,25 @@ public class MainActivity extends AppCompatActivity {
                         )
                 );
 
+        // ✅ UPDATED: OPEN HEALTH DASHBOARD
         findViewById(R.id.btnHealthCheck)
                 .setOnClickListener(v ->
-                        Toast.makeText(
-                                MainActivity.this,
-                                "Device health check coming soon",
-                                Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(
+                                new Intent(
+                                        MainActivity.this,
+                                        HealthDashboardActivity.class
+                                )
+                        )
                 );
     }
 
     // =================================================
-    // FILE & FOLDER SCANNING (FIXED)
+    // FILE & FOLDER SCANNING
     // =================================================
 
     private void openFolderPicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 
-        // 🔥 REQUIRED FOR ANDROID 11+ / VIVO / INSTAGRAM
         intent.addFlags(
                 Intent.FLAG_GRANT_READ_URI_PERMISSION |
                         Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
@@ -199,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // =================================================
-    // ACTIVITY RESULTS (SAFE)
+    // ACTIVITY RESULTS
     // =================================================
 
     @Override
@@ -224,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        // File picked
         if (requestCode == FilePickerHelper.PICK_FILE_REQUEST
                 && resultCode == RESULT_OK
                 && data != null) {
@@ -238,7 +239,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        // Folder picked (OEM SAFE)
         if (requestCode == REQ_PICK_FOLDER
                 && resultCode == RESULT_OK
                 && data != null) {

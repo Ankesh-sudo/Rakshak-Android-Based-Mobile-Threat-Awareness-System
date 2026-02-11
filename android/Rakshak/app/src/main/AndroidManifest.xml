@@ -74,6 +74,12 @@
             </intent-filter>
         </activity>
 
+        <!-- ================= PHONE HEALTH ================= -->
+        <activity
+            android:name=".health.HealthDashboardActivity"
+            android:exported="false"
+            android:label="Phone Health" />
+
         <!-- ================= FILE SCAN + SHARE ================= -->
         <activity
             android:name=".filescanner.FileScanActivity"
