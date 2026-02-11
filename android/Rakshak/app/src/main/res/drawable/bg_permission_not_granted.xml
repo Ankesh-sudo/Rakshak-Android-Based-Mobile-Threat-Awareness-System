@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Neutral dark background for DISABLED permission -->
+    <solid android:color="#21262D"/>
+
+    <!-- Rounded pill shape -->
+    <corners android:radius="16dp"/>
+
+    <!-- Inner padding safety -->
+    <padding
+        android:left="6dp"
+        android:top="4dp"
+        android:right="6dp"
+        android:bottom="4dp"/>
+
+</shape>

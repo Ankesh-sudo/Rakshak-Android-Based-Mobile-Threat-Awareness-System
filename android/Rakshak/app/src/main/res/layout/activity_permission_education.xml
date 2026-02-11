@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 🟦 App Icon -->
+        <ImageView
+            android:id="@+id/eduAppIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_icon_desc" />
+
+        <!-- 🟦 App Name -->
+        <TextView
+            android:id="@+id/eduAppName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="App Name"
+            android:textColor="@color/text_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="12dp" />
+
+        <!-- 🟨 Section Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Why these permissions matter"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp" />
+
+        <!-- 📖 Permission Explanations -->
+        <LinearLayout
+            android:id="@+id/permissionExplanationContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp" />
+
+        <!-- 🔘 Action Button -->
+        <Button
+            android:id="@+id/openSettingsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Open App Permission Settings"
+            android:textAllCaps="false"
+            android:layout_marginTop="28dp"
+            android:backgroundTint="@color/brand_secondary"
+            android:textColor="@color/bg_dark" />
+
+    </LinearLayout>
+</ScrollView>

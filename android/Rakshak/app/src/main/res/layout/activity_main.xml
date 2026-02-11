@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0E1117">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- ================= APP HEADER ================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rakshak Security"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Early warnings. Informed decisions."
+            android:textSize="14sp"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="32dp" />
+
+        <!-- ================= CORE PROTECTION ================= -->
+
+        <Button
+            android:id="@+id/btnCallProtection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call Protection"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnLinkScanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan a Link"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ================= FILE & FOLDER SECURITY ================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="File &amp; Folder Security"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnScanFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan a File"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnScanFolder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan a Folder"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ================= SECURITY INSIGHTS ================= -->
+
+        <Button
+            android:id="@+id/btnPermissionTracker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Permission Tracker"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- ================= UTILITIES ================= -->
+
+        <Button
+            android:id="@+id/btnHealthCheck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Phone Health Check"
+            android:textAllCaps="false"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+</ScrollView>

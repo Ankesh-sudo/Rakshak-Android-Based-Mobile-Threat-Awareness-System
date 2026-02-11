@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0E1117">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- HEADER -->
+        <TextView
+            android:id="@+id/txtScanTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="File Scan Result"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/txtFilePath"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected file"
+            android:textSize="12sp"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/txtFileMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Type: UNKNOWN • Size: 0 KB"
+            android:textSize="12sp"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="16dp" />
+
+        <!-- PROGRESS -->
+        <ProgressBar
+            android:id="@+id/scanProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:layout_marginBottom="16dp" />
+
+        <!-- RISK CARD -->
+        <LinearLayout
+            android:id="@+id/riskCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/bg_risk_safe"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/txtRiskLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAFE"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/txtRiskDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No threats detected."
+                android:textSize="14sp"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- ACTIONS -->
+        <Button
+            android:id="@+id/btnScanAnother"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Scan Another File"
+            android:textAllCaps="false"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnBackHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Back to Dashboard"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+</ScrollView>
