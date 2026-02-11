@@ -47,7 +47,7 @@
 
         </FrameLayout>
 
-        <!-- ================= SCAN BUTTON ================= -->
+        <!-- ================= PRIMARY ACTION ================= -->
         <Button
             android:id="@+id/btnScanHealth"
             android:layout_width="match_parent"
@@ -59,13 +59,25 @@
             android:textColor="#000000"
             android:backgroundTint="#00FFAA"/>
 
+        <!-- ================= SECONDARY ACTION ================= -->
+        <Button
+            android:id="@+id/btnViewThreats"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:text="View Detected Threats"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:backgroundTint="#FFA500"/>
+
         <!-- ================= SCAN STATUS ================= -->
         <TextView
             android:id="@+id/tvScanStatus"
             android:text="Ready to scan"
             android:textColor="#AAAAAA"
             android:textSize="14sp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -120,7 +132,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:layout_marginTop="15dp"
-                android:text="Storage Used: --"
+                android:text="Files Scanned: --"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

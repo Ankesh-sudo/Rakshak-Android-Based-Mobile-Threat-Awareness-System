@@ -20,6 +20,8 @@ public class ThreatListActivity extends AppCompatActivity {
     private TextView tvEmpty;
     private TextView tvTitle;
 
+    private ArrayList<MediaStoreScanner.ScanFile> threatList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,26 +39,37 @@ public class ThreatListActivity extends AppCompatActivity {
     @SuppressWarnings("unchecked")
     private void loadThreats() {
 
-        ArrayList<MediaStoreScanner.ScanFile> threatList =
-                (ArrayList<MediaStoreScanner.ScanFile>)
-                        getIntent().getSerializableExtra(EXTRA_THREATS);
+        threatList = (ArrayList<MediaStoreScanner.ScanFile>)
+                getIntent().getSerializableExtra(EXTRA_THREATS);
 
-        if (threatList == null || threatList.isEmpty()) {
+        if (threatList == null) {
+            threatList = new ArrayList<>();
+        }
+
+        updateUI();
+    }
+
+    private void updateUI() {
+
+        if (threatList.isEmpty()) {
 
             tvTitle.setText("Detected Threats");
             tvEmpty.setVisibility(View.VISIBLE);
             tvEmpty.setText("No security threats detected 🎉");
 
             recyclerView.setVisibility(View.GONE);
-            return;
+
+        } else {
+
+            tvTitle.setText("Detected Threats (" + threatList.size() + ")");
+
+            tvEmpty.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
+            ThreatAdapter adapter =
+                    new ThreatAdapter(this, threatList);
+
+            recyclerView.setAdapter(adapter);
         }
-
-        tvTitle.setText("Detected Threats (" + threatList.size() + ")");
-
-        tvEmpty.setVisibility(View.GONE);
-        recyclerView.setVisibility(View.VISIBLE);
-
-        ThreatAdapter adapter = new ThreatAdapter(threatList);
-        recyclerView.setAdapter(adapter);
     }
 }

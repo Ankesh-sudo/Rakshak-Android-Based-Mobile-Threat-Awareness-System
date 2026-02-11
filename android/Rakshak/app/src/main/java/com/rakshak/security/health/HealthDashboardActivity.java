@@ -26,8 +26,10 @@ public class HealthDashboardActivity extends AppCompatActivity {
 
     private TextView tvBattery, tvTemp, tvRam, tvStorage, tvScore;
     private TextView tvScanStatus, tvScanTime;
+
     private ProgressBar scoreProgress;
     private Button btnScanHealth;
+    private Button btnViewThreats;
 
     private final Handler handler = new Handler();
 
@@ -35,16 +37,20 @@ public class HealthDashboardActivity extends AppCompatActivity {
     private boolean isScanning = false;
     private long scanStartTime;
 
+    // 🔴 Store last scan threats
+    private ArrayList<MediaStoreScanner.ScanFile> lastThreats = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_health_dashboard);
 
         initViews();
-        setupScanButton();
+        setupButtons();
     }
 
     private void initViews() {
+
         tvBattery = findViewById(R.id.tvBattery);
         tvTemp = findViewById(R.id.tvTemp);
         tvRam = findViewById(R.id.tvRam);
@@ -54,14 +60,19 @@ public class HealthDashboardActivity extends AppCompatActivity {
         tvScanTime = findViewById(R.id.tvScanTime);
 
         scoreProgress = findViewById(R.id.scoreProgress);
+
         btnScanHealth = findViewById(R.id.btnScanHealth);
+        btnViewThreats = findViewById(R.id.btnViewThreats);
 
         scoreProgress.setMax(100);
         scoreProgress.setProgress(0);
     }
 
-    private void setupScanButton() {
+    private void setupButtons() {
+
         btnScanHealth.setOnClickListener(v -> checkPermissionAndStart());
+
+        btnViewThreats.setOnClickListener(v -> openThreatScreen());
     }
 
     // ================= PERMISSION =================
@@ -78,13 +89,16 @@ public class HealthDashboardActivity extends AppCompatActivity {
     private boolean hasStoragePermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
             return ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
                     && ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
                     && ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
+
         } else {
+
             return ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         }
@@ -198,6 +212,9 @@ public class HealthDashboardActivity extends AppCompatActivity {
 
             long scanDuration = System.currentTimeMillis() - scanStartTime;
 
+            // 🔴 Save threats for manual viewing
+            lastThreats = new ArrayList<>(fileResult.securityThreats);
+
             runOnUiThread(() -> {
 
                 animateProgress(finalScore);
@@ -212,23 +229,26 @@ public class HealthDashboardActivity extends AppCompatActivity {
                 btnScanHealth.setText("Scan Device Health");
 
                 isScanning = false;
-
-                // 🔴 Launch only if real security threats exist
-                if (!fileResult.securityThreats.isEmpty()) {
-
-                    Intent intent =
-                            new Intent(this, ThreatListActivity.class);
-
-                    intent.putExtra(
-                            ThreatListActivity.EXTRA_THREATS,
-                            new ArrayList<>(fileResult.securityThreats)
-                    );
-
-                    startActivity(intent);
-                }
             });
 
         }).start();
+    }
+
+    // ================= OPEN THREAT SCREEN =================
+
+    private void openThreatScreen() {
+
+        if (lastThreats == null || lastThreats.isEmpty()) {
+            tvScanStatus.setText("No security threats detected 🎉");
+            return;
+        }
+
+        Intent intent = new Intent(this, ThreatListActivity.class);
+        intent.putExtra(
+                ThreatListActivity.EXTRA_THREATS,
+                lastThreats
+        );
+        startActivity(intent);
     }
 
     // ================= HEALTH SCORE =================
@@ -254,7 +274,6 @@ public class HealthDashboardActivity extends AppCompatActivity {
     private int adjustScoreWithThreats(int baseScore,
                                        MediaStoreScanner.ScanResult result) {
 
-        // Only real security threats affect security score
         int penalty = result.suspiciousFiles * 3;
 
         return Math.max(baseScore - penalty, 0);
