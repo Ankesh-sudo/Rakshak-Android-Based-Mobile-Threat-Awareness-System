@@ -8,28 +8,23 @@
     <!-- ================================================= -->
     <queries>
 
-        <!-- Launcher -->
         <intent>
             <action android:name="android.intent.action.MAIN" />
         </intent>
 
-        <!-- File picker -->
         <intent>
             <action android:name="android.intent.action.OPEN_DOCUMENT" />
         </intent>
 
-        <!-- Folder picker -->
         <intent>
             <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
         </intent>
 
-        <!-- Text share -->
         <intent>
             <action android:name="android.intent.action.SEND" />
             <data android:mimeType="text/plain" />
         </intent>
 
-        <!-- Selected text -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT" />
             <data android:mimeType="text/plain" />
@@ -45,13 +40,27 @@
         android:required="false" />
 
     <!-- ================================================= -->
-    <!-- PERMISSIONS (PLAY STORE SAFE) -->
+    <!-- PHONE & SMS PERMISSIONS -->
     <!-- ================================================= -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- ================================================= -->
+    <!-- STORAGE PERMISSIONS (MediaStore Compatible) -->
+    <!-- ================================================= -->
+
+    <!-- Android 10–12 -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- Android 13+ (API 33+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- ================================================= -->
 
@@ -62,16 +71,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Rakshak"
-        tools:targetApi="31">
+        tools:targetApi="34">
 
         <!-- ================= MAIN DASHBOARD ================= -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <!-- ================= PHONE HEALTH ================= -->
@@ -120,14 +131,12 @@
             android:permission="android.permission.PROCESS_TEXT"
             android:label="Scan link with Rakshak">
 
-            <!-- Normal Share -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
 
-            <!-- Selected text -->
             <intent-filter>
                 <action android:name="android.intent.action.PROCESS_TEXT" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -145,9 +154,11 @@
             android:name=".receivers.CallReceiver"
             android:enabled="true"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
+
         </receiver>
 
         <receiver
@@ -155,9 +166,11 @@
             android:permission="android.permission.BROADCAST_SMS"
             android:enabled="true"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
+
         </receiver>
 
         <!-- ================= OVERLAY SERVICE ================= -->
