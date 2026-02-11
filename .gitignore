@@ -1,0 +1,63 @@
+# ==============================
+# 🔹 Android / Gradle
+# ==============================
+
+.gradle/
+build/
+*/build/
+
+local.properties
+
+# Gradle wrapper logs
+gradle-app.setting
+
+# Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Keystore files (IMPORTANT - never push)
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# Generated files
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# ==============================
+# 🔹 Kotlin / Java
+# ==============================
+
+*.class
+*.jar
+*.war
+
+# ==============================
+# 🔹 VS Code
+# ==============================
+
+.vscode/
+
+# ==============================
+# 🔹 Backend (if Node.js inside backend/)
+# ==============================
+
+backend/node_modules/
+backend/.env
+
+# ==============================
+# 🔹 Misc
+# ==============================
+
+*.apk
+*.ap_
+*.aab
