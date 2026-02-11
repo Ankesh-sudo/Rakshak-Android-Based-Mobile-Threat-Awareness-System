@@ -4,6 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ================================================= -->
+    <!-- INTERNET PERMISSION (Required for AI Chatbot) -->
+    <!-- ================================================= -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- ================================================= -->
     <!-- PACKAGE VISIBILITY (ANDROID 11+) -->
     <!-- ================================================= -->
     <queries>
@@ -88,6 +93,12 @@
             </intent-filter>
 
         </activity>
+
+        <!-- ================= CHATBOT ================= -->
+        <activity
+            android:name=".chatbot.ChatActivity"
+            android:exported="false"
+            android:label="Rakshak AI Assistant" />
 
         <!-- ================= PHONE HEALTH ================= -->
         <activity

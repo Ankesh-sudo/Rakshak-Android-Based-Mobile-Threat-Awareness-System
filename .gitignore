@@ -7,6 +7,9 @@ build/
 */build/
 
 local.properties
+android/Rakshak/gradle.properties
+
+
 
 # Gradle wrapper logs
 gradle-app.setting

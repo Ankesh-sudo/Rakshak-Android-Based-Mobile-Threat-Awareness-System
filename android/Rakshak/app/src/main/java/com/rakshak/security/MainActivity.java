@@ -18,6 +18,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.rakshak.security.chatbot.ChatActivity; // ✅ NEW IMPORT
 import com.rakshak.security.filescanner.FilePickerHelper;
 import com.rakshak.security.filescanner.FileScanActivity;
 import com.rakshak.security.filescanner.FolderScanResult;
@@ -25,7 +26,7 @@ import com.rakshak.security.filescanner.FolderScanResultActivity;
 import com.rakshak.security.filescanner.FolderScanner;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
-import com.rakshak.security.health.HealthDashboardActivity; // ✅ NEW IMPORT
+import com.rakshak.security.health.HealthDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,13 +91,24 @@ public class MainActivity extends AppCompatActivity {
                         )
                 );
 
-        // ✅ UPDATED: OPEN HEALTH DASHBOARD
         findViewById(R.id.btnHealthCheck)
                 .setOnClickListener(v ->
                         startActivity(
                                 new Intent(
                                         MainActivity.this,
                                         HealthDashboardActivity.class
+                                )
+                        )
+                );
+
+        // ================= 🤖 AI ASSISTANT =================
+
+        findViewById(R.id.btnChatBot)
+                .setOnClickListener(v ->
+                        startActivity(
+                                new Intent(
+                                        MainActivity.this,
+                                        ChatActivity.class
                                 )
                         )
                 );

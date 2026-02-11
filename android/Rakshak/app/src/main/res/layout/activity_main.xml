@@ -100,6 +100,13 @@
             android:textAllCaps="false"
             android:textSize="18sp" />
 
+        <Button
+            android:id="@+id/btnChatBot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="AI Assistant"/>
+
+
     </LinearLayout>
 
 </ScrollView>
