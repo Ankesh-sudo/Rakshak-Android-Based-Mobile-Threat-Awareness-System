@@ -86,7 +86,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Rakshak"
-        android:usesCleartextTraffic="false"
+        android:usesCleartextTraffic="true"
         tools:targetApi="34">
 
         <!-- ================= MAIN ================= -->
@@ -108,7 +108,7 @@
             android:label="Security Dashboard"
             android:theme="@style/Theme.Rakshak" />
 
-        <!-- ================= RISK HISTORY (NEW) ================= -->
+        <!-- ================= RISK HISTORY ================= -->
         <activity
             android:name=".ui.RiskHistoryActivity"
             android:exported="false"

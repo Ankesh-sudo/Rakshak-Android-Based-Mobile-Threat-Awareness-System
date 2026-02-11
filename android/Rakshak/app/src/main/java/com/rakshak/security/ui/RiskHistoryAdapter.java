@@ -1,13 +1,17 @@
 package com.rakshak.security.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rakshak.security.R;
+import com.rakshak.security.core.database.RiskDatabase;
 import com.rakshak.security.core.database.RiskEntity;
 
 import java.text.SimpleDateFormat;
@@ -48,6 +52,53 @@ public class RiskHistoryAdapter
                         .format(new Date(entity.timestamp));
 
         holder.timeText.setText(formattedDate);
+
+        // ===============================
+        // Click to View + Delete
+        // ===============================
+        holder.itemView.setOnClickListener(v -> {
+
+            Context context = v.getContext();
+
+            String messageContent = entity.message != null
+                    ? entity.message
+                    : "No message stored.";
+
+            new AlertDialog.Builder(context)
+                    .setTitle("Risk Details")
+                    .setMessage(
+                            "Type: " + entity.type +
+                                    "\nSource: " + entity.source +
+                                    "\nScore: " + entity.score +
+                                    "\nLevel: " + entity.level +
+                                    "\n\nMessage:\n" + messageContent
+                    )
+                    .setPositiveButton("Delete", (dialog, which) -> {
+
+                        new Thread(() -> {
+
+                            RiskDatabase.getInstance(context)
+                                    .riskDao()
+                                    .delete(entity);
+
+                            // Remove from list & update UI
+                            ((android.app.Activity) context)
+                                    .runOnUiThread(() -> {
+                                        int adapterPosition = holder.getAdapterPosition();
+                                        if (adapterPosition != RecyclerView.NO_POSITION) {
+                                            list.remove(adapterPosition);
+                                            notifyItemRemoved(adapterPosition);
+                                            Toast.makeText(context,
+                                                    "Deleted",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                        }).start();
+                    })
+                    .setNegativeButton("Close", null)
+                    .show();
+        });
     }
 
     @Override

@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 import com.rakshak.security.core.RiskEngine;
 import com.rakshak.security.core.RiskResult;
 import com.rakshak.security.core.database.RiskDatabase;
 import com.rakshak.security.core.database.RiskEntity;
+import com.rakshak.security.core.ml.CloudSpamClassifier;
 import com.rakshak.security.utils.NotificationUtil;
 
 public class SmsReceiver extends BroadcastReceiver {
@@ -48,37 +50,75 @@ public class SmsReceiver extends BroadcastReceiver {
 
             if (body == null) continue;
 
-            // 🔥 Analyze SMS
-            RiskResult result =
-                    RiskEngine.analyzeIncomingSms(sender, body);
+            final String finalSender = sender != null ? sender : "Unknown";
+            final String finalBody = body;
+            final Context finalContext = context;
 
-            // 🔥 Save to Room Database (background thread)
-            new Thread(() -> {
+            // ===============================
+            // STEP 1: Heuristic Analysis
+            // ===============================
+            RiskResult heuristicResult =
+                    RiskEngine.analyzeIncomingSms(finalSender, finalBody);
 
-                RiskEntity entity = new RiskEntity(
-                        "SMS",
-                        sender != null ? sender : "Unknown",
-                        result.getScore(),
-                        result.getRiskLevel().name(),
-                        System.currentTimeMillis()
-                );
+            final int baseScore = heuristicResult.getScore();
 
-                RiskDatabase.getInstance(context)
-                        .riskDao()
-                        .insert(entity);
+            // ===============================
+            // STEP 2: ML Analysis (Async)
+            // ===============================
+            CloudSpamClassifier.checkSpam(finalBody, probability -> {
 
-            }).start();
+                Log.d("ML_RESPONSE", "Spam Probability: " + probability);
 
-            // 🔥 Show Notification if risk is Medium or High
-            if (result.shouldWarnUser()) {
+                int finalScore = baseScore;
 
-                NotificationUtil.showSmsWarning(
-                        context,
-                        sender,
-                        body,
-                        result
-                );
-            }
+                // Merge ML probability into risk score
+                if (probability > 0.90f) {
+                    finalScore += 60;
+                } else if (probability > 0.75f) {
+                    finalScore += 40;
+                } else if (probability > 0.60f) {
+                    finalScore += 20;
+                }
+
+                // Recalculate final risk using updated score logic
+                RiskResult finalResult =
+                        RiskEngine.analyzeIncomingSms(finalSender, finalBody);
+
+                final int scoreToSave = finalScore;
+
+                // ===============================
+                // Save to Database (Background)
+                // ===============================
+                new Thread(() -> {
+
+                    RiskEntity entity = new RiskEntity(
+                            "SMS",
+                            finalSender,
+                            scoreToSave,
+                            finalResult.getRiskLevel().name(),
+                            System.currentTimeMillis(),
+                            finalBody // ✅ Store full SMS message
+                    );
+
+                    RiskDatabase.getInstance(finalContext)
+                            .riskDao()
+                            .insert(entity);
+
+                }).start();
+
+                // ===============================
+                // Show Warning if Needed
+                // ===============================
+                if (finalResult.shouldWarnUser()) {
+
+                    NotificationUtil.showSmsWarning(
+                            finalContext,
+                            finalSender,
+                            finalBody,
+                            finalResult
+                    );
+                }
+            });
         }
     }
 }
