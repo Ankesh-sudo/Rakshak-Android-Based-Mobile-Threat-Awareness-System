@@ -24,6 +24,8 @@ import com.rakshak.security.filescanner.FilePickerHelper;
 import com.rakshak.security.health.HealthDashboardActivity;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
+import com.rakshak.security.ui.RiskHistoryActivity;
+import com.rakshak.security.ui.SecurityDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQ_CALL_LOG = 1003;
     private static final int REQ_OVERLAY = 1004;
     private static final int REQ_ROLE = 1005;
+    private static final int REQ_NOTIFICATION = 1006;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     return insets;
                 }
         );
+
+        requestNotificationPermissionIfNeeded();
 
         // ================= DASHBOARD BUTTONS =================
 
@@ -80,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnChatBot)
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, ChatActivity.class)));
+
+        // 🔥 NEW: Security Dashboard
+        findViewById(R.id.btnSecurityDashboard)
+                .setOnClickListener(v ->
+                        startActivity(new Intent(this, SecurityDashboardActivity.class)));
+
+        // 🔥 NEW: Risk History
+        findViewById(R.id.btnRiskHistory)
+                .setOnClickListener(v ->
+                        startActivity(new Intent(this, RiskHistoryActivity.class)));
     }
 
     // =================================================
@@ -135,6 +150,28 @@ public class MainActivity extends AppCompatActivity {
                                 RoleManager.ROLE_CALL_SCREENING);
 
                 startActivityForResult(intent, REQ_ROLE);
+            }
+        }
+    }
+
+    // =================================================
+    // NOTIFICATION PERMISSION (Android 13+)
+    // =================================================
+
+    private void requestNotificationPermissionIfNeeded() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQ_NOTIFICATION
+                );
             }
         }
     }
@@ -228,6 +265,10 @@ public class MainActivity extends AppCompatActivity {
                 permissions,
                 grantResults
         );
+
+        if (requestCode == REQ_NOTIFICATION) {
+            return;
+        }
 
         if (isGranted(grantResults)) {
             startCallProtectionFlow();

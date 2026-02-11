@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#121212"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Title -->
+    <TextView
+        android:text="Overall Security Status"
+        android:textSize="22sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- Circular Progress -->
+    <FrameLayout
+        android:layout_width="200dp"
+        android:layout_height="200dp">
+
+        <ProgressBar
+            android:id="@+id/riskProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="300"
+            android:progress="0"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/risk_progress_drawable"/>
+
+        <TextView
+            android:id="@+id/scoreText"
+            android:text="0"
+            android:textSize="36sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <!-- Risk Level -->
+    <TextView
+        android:id="@+id/levelText"
+        android:text="SAFE"
+        android:textSize="20sp"
+        android:textColor="#4CAF50"
+        android:layout_marginTop="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

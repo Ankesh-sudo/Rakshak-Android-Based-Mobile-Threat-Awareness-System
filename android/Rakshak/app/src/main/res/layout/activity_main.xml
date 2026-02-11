@@ -30,7 +30,45 @@
             android:textColor="#9AA4B2"
             android:layout_marginBottom="32dp" />
 
+        <!-- ================= OVERALL SECURITY ================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Security Overview"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnSecurityDashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Security Dashboard"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnRiskHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Risk History"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="24dp" />
+
         <!-- ================= CORE PROTECTION ================= -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Core Protection"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/btnCallProtection"
@@ -81,6 +119,15 @@
 
         <!-- ================= SECURITY INSIGHTS ================= -->
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Security Insights"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="12dp" />
+
         <Button
             android:id="@+id/btnPermissionTracker"
             android:layout_width="match_parent"
@@ -92,20 +139,32 @@
 
         <!-- ================= UTILITIES ================= -->
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Utilities"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#9AA4B2"
+            android:layout_marginBottom="12dp" />
+
         <Button
             android:id="@+id/btnHealthCheck"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Phone Health Check"
             android:textAllCaps="false"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/btnChatBot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="AI Assistant"/>
-
+            android:text="AI Assistant"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginBottom="24dp" />
 
     </LinearLayout>
 

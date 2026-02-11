@@ -6,30 +6,43 @@ import java.util.List;
 
 /**
  * Holds the result of risk analysis for calls, SMS, files, links, etc.
- * This class is immutable after creation.
+ * Immutable and thread-safe after creation.
  */
-public class RiskResult {
+public final class RiskResult {
 
     // Final risk score (0–100)
-    public final int score;
+    private final int score;
 
     // Risk level derived from score
-    public final RiskLevel level;
+    private final RiskLevel level;
 
     // Human-readable reasons shown to user
     private final List<String> reasons;
 
     public RiskResult(int score, RiskLevel level, List<String> reasons) {
-        this.score = score;
-        this.level = level;
+        this.score = clamp(score);
+        this.level = level != null ? level : RiskLevel.LOW;
         this.reasons = reasons != null
                 ? new ArrayList<>(reasons)
                 : new ArrayList<>();
     }
 
     // =================================================
+    // CORE GETTERS (🔥 Fixes your errors)
+    // =================================================
+
+    public int getScore() {
+        return score;
+    }
+
+    public RiskLevel getRiskLevel() {
+        return level;
+    }
+
+    // =================================================
     // RISK HELPERS
     // =================================================
+
     public boolean isHighRisk() {
         return level == RiskLevel.HIGH;
     }
@@ -88,11 +101,21 @@ public class RiskResult {
     }
 
     // =================================================
+    // INTERNAL SAFETY
+    // =================================================
+
+    private int clamp(int value) {
+        return Math.max(0, Math.min(value, 100));
+    }
+
+    // =================================================
     // RISK CATEGORIES
     // =================================================
+
     public enum RiskLevel {
         LOW,
         MEDIUM,
         HIGH
+        // You can add CRITICAL later if needed
     }
 }

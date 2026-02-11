@@ -8,21 +8,30 @@ import com.rakshak.security.calls.engine.CallThreatEngine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class RiskEngine {
 
     // =================================================
     // SMS RISK CONFIG
     // =================================================
-    private static final int SMS_URGENT_KEYWORD_RISK = 25;
-    private static final int SMS_OTP_KYC_RISK = 30;
+    private static final int SMS_URGENT_KEYWORD_RISK = 20;
+    private static final int SMS_SENSITIVE_INFO_RISK = 30;
     private static final int SMS_SUSPICIOUS_LINK_RISK = 35;
-    private static final int SMS_UNKNOWN_SENDER_RISK = 20;
+    private static final int SMS_UNKNOWN_SENDER_RISK = 15;
+    private static final int SMS_INTERNATIONAL_RISK = 20;
     private static final int SMS_SHORT_MESSAGE_RISK = 10;
-    private static final int TRUSTED_SENDER_REDUCTION = 20;
+    private static final int SMS_REPEATED_PATTERN_RISK = 10;
+    private static final int TRUSTED_SENDER_REDUCTION = 15;
+
+    private static final Pattern SUSPICIOUS_TLD_PATTERN =
+            Pattern.compile(".*\\.(ru|xyz|click|top|gq|tk)(/.*)?");
+
+    private static final Pattern URL_PATTERN =
+            Pattern.compile("(http|https)://[^\\s]+");
 
     // =================================================
-    // CALL ANALYSIS (Delegated to CallThreatEngine)
+    // CALL ANALYSIS
     // =================================================
     public static RiskResult analyzeIncomingCall(
             Context context,
@@ -43,14 +52,14 @@ public class RiskEngine {
         int score = clamp(callResult.getRiskScore());
 
         List<String> reasons = new ArrayList<>();
-        reasons.add("Call threat evaluated by Intelligent Call Threat Engine");
+        reasons.add("Evaluated by Intelligent Call Threat Engine");
         reasons.add("Call Risk Score: " + score);
 
         return buildResult(score, reasons);
     }
 
     // =================================================
-    // SMS ANALYSIS (Advanced & Clean)
+    // SMS ANALYSIS
     // =================================================
     public static RiskResult analyzeIncomingSms(
             String sender,
@@ -64,49 +73,63 @@ public class RiskEngine {
 
         if (TextUtils.isEmpty(sender)) {
             score += SMS_UNKNOWN_SENDER_RISK;
-            reasons.add("Message sender is unknown or hidden");
+            reasons.add("Unknown or hidden sender detected");
+        }
+
+        if (!TextUtils.isEmpty(sender) && sender.startsWith("+")) {
+            score += SMS_INTERNATIONAL_RISK;
+            reasons.add("International number detected");
         }
 
         if (containsAny(text,
                 "urgent", "immediately", "blocked", "suspended",
-                "action required", "final notice")) {
+                "final notice", "legal action", "act now")) {
             score += SMS_URGENT_KEYWORD_RISK;
             reasons.add("Urgent or threatening language detected");
         }
 
         if (containsAny(text,
                 "otp", "kyc", "bank", "verify", "account",
-                "password", "upi", "pin")) {
-            score += SMS_OTP_KYC_RISK;
+                "password", "upi", "pin", "credit card")) {
+            score += SMS_SENSITIVE_INFO_RISK;
             reasons.add("Sensitive information request detected");
         }
 
-        if (containsAny(text,
-                "http://", "https://", "bit.ly", "tinyurl",
-                ".ru", ".xyz", ".click")) {
+        if (URL_PATTERN.matcher(text).find()) {
+
             score += SMS_SUSPICIOUS_LINK_RISK;
-            reasons.add("Suspicious or shortened link detected");
+            reasons.add("Clickable URL detected in SMS");
+
+            if (SUSPICIOUS_TLD_PATTERN.matcher(text).find()) {
+                score += 10;
+                reasons.add("High-risk domain extension detected");
+            }
         }
 
-        if (text.length() > 0 && text.length() < 25) {
+        if (!TextUtils.isEmpty(text) && text.length() < 20) {
             score += SMS_SHORT_MESSAGE_RISK;
-            reasons.add("Short alarming message detected");
+            reasons.add("Very short message detected");
+        }
+
+        if (text.matches(".*([!$*])\\1{2,}.*")) {
+            score += SMS_REPEATED_PATTERN_RISK;
+            reasons.add("Excessive special character pattern detected");
         }
 
         if (!TextUtils.isEmpty(sender)
-                && (sender.startsWith("VM-")
-                || sender.startsWith("AD-")
-                || sender.length() <= 6)) {
+                && sender.matches("^[A-Z]{2}-[A-Z0-9]{2,6}$")) {
+
             score -= TRUSTED_SENDER_REDUCTION;
-            reasons.add("Registered sender ID pattern detected — reducing risk");
+            reasons.add("Registered sender ID format detected");
         }
 
         score = clamp(score);
+
         return buildResult(score, reasons);
     }
 
     // =================================================
-    // FUTURE OVERALL SECURITY SCORING
+    // OVERALL DEVICE RISK SCORING (UPDATED)
     // =================================================
     public static SecurityRiskResult evaluateOverallRisk(
             Context context,
@@ -115,13 +138,18 @@ public class RiskEngine {
 
         SecurityRiskModel model = new SecurityRiskModel();
 
+        // Call Risk
         if (!TextUtils.isEmpty(recentCallNumber)) {
             CallRiskResult callResult =
                     CallThreatEngine.evaluate(context, recentCallNumber);
-            model.callRisk = callResult.getRiskScore();
+            model.callRisk = clamp(callResult.getRiskScore());
         }
 
-        // Future integrations:
+        // SMS Risk (🔥 Updated from storage)
+        model.smsRisk =
+                SecurityRiskStorage.getLastSmsRisk(context);
+
+        // Future integrations
         model.fileRisk = 0;
         model.linkRisk = 0;
         model.permissionRisk = 0;
@@ -150,16 +178,16 @@ public class RiskEngine {
     // =================================================
     private static boolean containsAny(String text, String... keywords) {
         if (TextUtils.isEmpty(text)) return false;
+
         for (String keyword : keywords) {
             if (text.contains(keyword)) return true;
         }
+
         return false;
     }
 
     private static int clamp(int score) {
-        if (score < 0) return 0;
-        if (score > 100) return 100;
-        return score;
+        return Math.max(0, Math.min(score, 100));
     }
 
     private static RiskResult buildResult(int score, List<String> reasons) {

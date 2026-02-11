@@ -3,64 +3,79 @@ package com.rakshak.security.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;
 
 import com.rakshak.security.core.RiskEngine;
 import com.rakshak.security.core.RiskResult;
+import com.rakshak.security.core.database.RiskDatabase;
+import com.rakshak.security.core.database.RiskEntity;
 import com.rakshak.security.utils.NotificationUtil;
 
 public class SmsReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "Rakshak-SmsReceiver";
-
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if (intent == null || intent.getExtras() == null) return;
+        if (context == null || intent == null) return;
 
-        Object[] pdus = (Object[]) intent.getExtras().get("pdus");
-        String format = intent.getExtras().getString("format");
+        Bundle bundle = intent.getExtras();
+        if (bundle == null) return;
 
-        if (pdus == null || pdus.length == 0) return;
+        Object[] pdus = (Object[]) bundle.get("pdus");
+        String format = bundle.getString("format");
+
+        if (pdus == null) return;
 
         for (Object pdu : pdus) {
 
-            SmsMessage sms;
+            SmsMessage message;
+
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    sms = SmsMessage.createFromPdu((byte[]) pdu, format);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    message = SmsMessage.createFromPdu((byte[]) pdu, format);
                 } else {
-                    sms = SmsMessage.createFromPdu((byte[]) pdu);
+                    message = SmsMessage.createFromPdu((byte[]) pdu);
                 }
             } catch (Exception e) {
-                Log.e(TAG, "❌ Failed to parse SMS PDU", e);
                 continue;
             }
 
-            if (sms == null) continue;
+            if (message == null) continue;
 
-            String sender = sms.getOriginatingAddress();
-            String message = sms.getMessageBody();
+            String sender = message.getOriginatingAddress();
+            String body = message.getMessageBody();
 
-            Log.d(TAG, "📩 SMS received from: " + sender);
-            Log.d(TAG, "📝 Message: " + message);
+            if (body == null) continue;
 
-            // ---------- STEP 2: RISK ANALYSIS ----------
+            // 🔥 Analyze SMS
             RiskResult result =
-                    RiskEngine.analyzeIncomingSms(sender, message);
+                    RiskEngine.analyzeIncomingSms(sender, body);
 
-            Log.d(TAG, "🧠 Risk Score: " + result.score);
-            Log.d(TAG, "🚦 Risk Level: " + result.level.name());
+            // 🔥 Save to Room Database (background thread)
+            new Thread(() -> {
 
-            // ---------- USER WARNING (NOTIFICATION) ----------
-            if (result.level == RiskResult.RiskLevel.MEDIUM
-                    || result.level == RiskResult.RiskLevel.HIGH) {
+                RiskEntity entity = new RiskEntity(
+                        "SMS",
+                        sender != null ? sender : "Unknown",
+                        result.getScore(),
+                        result.getRiskLevel().name(),
+                        System.currentTimeMillis()
+                );
+
+                RiskDatabase.getInstance(context)
+                        .riskDao()
+                        .insert(entity);
+
+            }).start();
+
+            // 🔥 Show Notification if risk is Medium or High
+            if (result.shouldWarnUser()) {
 
                 NotificationUtil.showSmsWarning(
                         context,
                         sender,
+                        body,
                         result
                 );
             }
