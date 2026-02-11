@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnBasic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Basic Mode" />
+
+    <Button
+        android:id="@+id/btnSmart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Smart Mode"
+        android:layout_marginTop="16dp"/>
+
+    <Button
+        android:id="@+id/btnExtreme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Extreme Mode"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

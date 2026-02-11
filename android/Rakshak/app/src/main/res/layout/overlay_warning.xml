@@ -1,27 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/overlayRoot"
     android:orientation="vertical"
-    android:background="#CCB71C1C"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:background="#CC1B1B1B"
+    android:elevation="10dp">
 
+    <!-- TITLE -->
     <TextView
         android:id="@+id/riskTitle"
-        android:text="⚠️ RISK WARNING"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/risk_alert_title"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:textStyle="bold" />
 
+    <!-- PHONE NUMBER -->
     <TextView
-        android:id="@+id/riskDetails"
-        android:text="Suspicious incoming call detected"
+        android:id="@+id/riskNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/unknown_number"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
+        android:layout_marginTop="6dp" />
+
+    <!-- RISK SCORE -->
+    <TextView
+        android:id="@+id/riskScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/risk_score_default"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <!-- DIVIDER -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#55FFFFFF"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- REASONS -->
+    <TextView
+        android:id="@+id/riskDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/risk_default_message"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:lineSpacingExtra="2dp" />
+
+    <!-- ACTION BUTTON -->
+    <Button
+        android:id="@+id/btnDismiss"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/dismiss"
+        android:textAllCaps="false"
+        android:layout_marginTop="12dp" />
 
 </LinearLayout>

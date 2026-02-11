@@ -1,6 +1,10 @@
 package com.rakshak.security.core;
 
+import android.content.Context;
 import android.text.TextUtils;
+
+import com.rakshak.security.calls.engine.CallRiskResult;
+import com.rakshak.security.calls.engine.CallThreatEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,91 +12,45 @@ import java.util.List;
 public class RiskEngine {
 
     // =================================================
-    // CALL RISK CONFIG (STEP 2.1)
-    // =================================================
-    private static final int HIDDEN_NUMBER_RISK = 30;
-    private static final int NOT_IN_CONTACTS_RISK = 20;
-    private static final int SHORT_NUMBER_RISK = 15;
-    private static final int INTERNATIONAL_PATTERN_RISK = 15;
-
-    private static final int SAVED_CONTACT_TRUST_REDUCTION = 25;
-    private static final int FREQUENT_CALL_TRUST_REDUCTION = 15;
-
-    private static final int SHORT_CALL_SCAM_RISK = 20;
-
-    // =================================================
-    // SMS RISK CONFIG (STEP 2.2)
+    // SMS RISK CONFIG
     // =================================================
     private static final int SMS_URGENT_KEYWORD_RISK = 25;
     private static final int SMS_OTP_KYC_RISK = 30;
     private static final int SMS_SUSPICIOUS_LINK_RISK = 35;
     private static final int SMS_UNKNOWN_SENDER_RISK = 20;
     private static final int SMS_SHORT_MESSAGE_RISK = 10;
-
     private static final int TRUSTED_SENDER_REDUCTION = 20;
 
     // =================================================
-    // CALL ANALYSIS (STABLE)
+    // CALL ANALYSIS (Delegated to CallThreatEngine)
     // =================================================
     public static RiskResult analyzeIncomingCall(
-            String phoneNumber,
-            boolean isInContacts,
-            int callFrequency,
-            long lastCallDuration
+            Context context,
+            String phoneNumber
     ) {
 
-        int score = 0;
-        List<String> reasons = new ArrayList<>();
-
-        // Hidden / unknown number
         if (TextUtils.isEmpty(phoneNumber)) {
-            score += HIDDEN_NUMBER_RISK;
-            reasons.add("Caller number is hidden or unavailable");
+            return new RiskResult(
+                    40,
+                    RiskResult.RiskLevel.MEDIUM,
+                    List.of("Hidden or unavailable number detected")
+            );
         }
 
-        // Not in contacts
-        if (!isInContacts) {
-            score += NOT_IN_CONTACTS_RISK;
-            reasons.add("Caller is not in your contacts");
-        }
+        CallRiskResult callResult =
+                CallThreatEngine.evaluate(context, phoneNumber);
 
-        // Suspicious number patterns
-        if (!TextUtils.isEmpty(phoneNumber)) {
+        int score = clamp(callResult.getRiskScore());
 
-            if (phoneNumber.length() < 10) {
-                score += SHORT_NUMBER_RISK;
-                reasons.add("Unusual phone number length detected");
-            }
+        List<String> reasons = new ArrayList<>();
+        reasons.add("Call threat evaluated by Intelligent Call Threat Engine");
+        reasons.add("Call Risk Score: " + score);
 
-            if (phoneNumber.startsWith("00")) {
-                score += INTERNATIONAL_PATTERN_RISK;
-                reasons.add("International number pattern detected");
-            }
-        }
-
-        // Trust reductions
-        if (isInContacts) {
-            score -= SAVED_CONTACT_TRUST_REDUCTION;
-            reasons.add("Saved contact detected — reducing risk");
-        }
-
-        if (callFrequency >= 3) {
-            score -= FREQUENT_CALL_TRUST_REDUCTION;
-            reasons.add("Frequent caller pattern detected — reducing risk");
-        }
-
-        // Scam behavior
-        if (lastCallDuration > 0 && lastCallDuration < 5) {
-            score += SHORT_CALL_SCAM_RISK;
-            reasons.add("Very short previous call detected — common scam behavior");
-        }
-
-        score = clamp(score);
         return buildResult(score, reasons);
     }
 
     // =================================================
-    // SMS ANALYSIS (STEP 2.2 – IMPROVED)
+    // SMS ANALYSIS (Advanced & Clean)
     // =================================================
     public static RiskResult analyzeIncomingSms(
             String sender,
@@ -104,13 +62,11 @@ public class RiskEngine {
 
         String text = message != null ? message.toLowerCase() : "";
 
-        // Unknown / empty sender
         if (TextUtils.isEmpty(sender)) {
             score += SMS_UNKNOWN_SENDER_RISK;
             reasons.add("Message sender is unknown or hidden");
         }
 
-        // Urgency / threat language
         if (containsAny(text,
                 "urgent", "immediately", "blocked", "suspended",
                 "action required", "final notice")) {
@@ -118,7 +74,6 @@ public class RiskEngine {
             reasons.add("Urgent or threatening language detected");
         }
 
-        // OTP / KYC / banking bait
         if (containsAny(text,
                 "otp", "kyc", "bank", "verify", "account",
                 "password", "upi", "pin")) {
@@ -126,7 +81,6 @@ public class RiskEngine {
             reasons.add("Sensitive information request detected");
         }
 
-        // Suspicious links
         if (containsAny(text,
                 "http://", "https://", "bit.ly", "tinyurl",
                 ".ru", ".xyz", ".click")) {
@@ -134,13 +88,11 @@ public class RiskEngine {
             reasons.add("Suspicious or shortened link detected");
         }
 
-        // Very short alarming messages
         if (text.length() > 0 && text.length() < 25) {
             score += SMS_SHORT_MESSAGE_RISK;
             reasons.add("Short alarming message detected");
         }
 
-        // Trusted sender pattern (BANK-SMS, VM-*, etc.)
         if (!TextUtils.isEmpty(sender)
                 && (sender.startsWith("VM-")
                 || sender.startsWith("AD-")
@@ -151,6 +103,46 @@ public class RiskEngine {
 
         score = clamp(score);
         return buildResult(score, reasons);
+    }
+
+    // =================================================
+    // FUTURE OVERALL SECURITY SCORING
+    // =================================================
+    public static SecurityRiskResult evaluateOverallRisk(
+            Context context,
+            String recentCallNumber
+    ) {
+
+        SecurityRiskModel model = new SecurityRiskModel();
+
+        if (!TextUtils.isEmpty(recentCallNumber)) {
+            CallRiskResult callResult =
+                    CallThreatEngine.evaluate(context, recentCallNumber);
+            model.callRisk = callResult.getRiskScore();
+        }
+
+        // Future integrations:
+        model.fileRisk = 0;
+        model.linkRisk = 0;
+        model.permissionRisk = 0;
+        model.healthRisk = 0;
+
+        int totalScore = model.getTotalRiskScore();
+
+        SecurityRiskResult.OverallThreatLevel level;
+
+        if (totalScore >= 200)
+            level = SecurityRiskResult.OverallThreatLevel.CRITICAL;
+        else if (totalScore >= 150)
+            level = SecurityRiskResult.OverallThreatLevel.HIGH;
+        else if (totalScore >= 100)
+            level = SecurityRiskResult.OverallThreatLevel.MODERATE;
+        else if (totalScore >= 50)
+            level = SecurityRiskResult.OverallThreatLevel.LOW;
+        else
+            level = SecurityRiskResult.OverallThreatLevel.SAFE;
+
+        return new SecurityRiskResult(level, totalScore);
     }
 
     // =================================================
@@ -173,13 +165,13 @@ public class RiskEngine {
     private static RiskResult buildResult(int score, List<String> reasons) {
 
         RiskResult.RiskLevel level;
-        if (score >= 60) {
+
+        if (score >= 60)
             level = RiskResult.RiskLevel.HIGH;
-        } else if (score >= 30) {
+        else if (score >= 30)
             level = RiskResult.RiskLevel.MEDIUM;
-        } else {
+        else
             level = RiskResult.RiskLevel.LOW;
-        }
 
         return new RiskResult(score, level, reasons);
     }

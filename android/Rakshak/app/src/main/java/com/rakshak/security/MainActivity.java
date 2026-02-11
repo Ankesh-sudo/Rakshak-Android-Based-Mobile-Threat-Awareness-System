@@ -1,6 +1,7 @@
 package com.rakshak.security;
 
 import android.Manifest;
+import android.app.role.RoleManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -18,23 +19,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.rakshak.security.chatbot.ChatActivity; // ✅ NEW IMPORT
+import com.rakshak.security.chatbot.ChatActivity;
 import com.rakshak.security.filescanner.FilePickerHelper;
-import com.rakshak.security.filescanner.FileScanActivity;
-import com.rakshak.security.filescanner.FolderScanResult;
-import com.rakshak.security.filescanner.FolderScanResultActivity;
-import com.rakshak.security.filescanner.FolderScanner;
+import com.rakshak.security.health.HealthDashboardActivity;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
-import com.rakshak.security.health.HealthDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     // ================= REQUEST CODES =================
     private static final int REQ_PHONE = 1001;
     private static final int REQ_CONTACTS = 1002;
-    private static final int REQ_OVERLAY = 1003;
-    private static final int REQ_PICK_FOLDER = 2001;
+    private static final int REQ_CALL_LOG = 1003;
+    private static final int REQ_OVERLAY = 1004;
+    private static final int REQ_ROLE = 1005;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,69 +63,23 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btnLinkScanner)
                 .setOnClickListener(v ->
-                        startActivity(
-                                new Intent(
-                                        MainActivity.this,
-                                        LinkDashboardActivity.class
-                                )
-                        )
-                );
+                        startActivity(new Intent(this, LinkDashboardActivity.class)));
 
         findViewById(R.id.btnScanFile)
                 .setOnClickListener(v ->
-                        FilePickerHelper.pickFile(MainActivity.this)
-                );
-
-        findViewById(R.id.btnScanFolder)
-                .setOnClickListener(v -> openFolderPicker());
+                        FilePickerHelper.pickFile(this));
 
         findViewById(R.id.btnPermissionTracker)
                 .setOnClickListener(v ->
-                        startActivity(
-                                new Intent(
-                                        MainActivity.this,
-                                        PermissionDashboardActivity.class
-                                )
-                        )
-                );
+                        startActivity(new Intent(this, PermissionDashboardActivity.class)));
 
         findViewById(R.id.btnHealthCheck)
                 .setOnClickListener(v ->
-                        startActivity(
-                                new Intent(
-                                        MainActivity.this,
-                                        HealthDashboardActivity.class
-                                )
-                        )
-                );
-
-        // ================= 🤖 AI ASSISTANT =================
+                        startActivity(new Intent(this, HealthDashboardActivity.class)));
 
         findViewById(R.id.btnChatBot)
                 .setOnClickListener(v ->
-                        startActivity(
-                                new Intent(
-                                        MainActivity.this,
-                                        ChatActivity.class
-                                )
-                        )
-                );
-    }
-
-    // =================================================
-    // FILE & FOLDER SCANNING
-    // =================================================
-
-    private void openFolderPicker() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-
-        intent.addFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION |
-                        Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION |
-                        Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
-        );
-
-        startActivityForResult(intent, REQ_PICK_FOLDER);
+                        startActivity(new Intent(this, ChatActivity.class)));
     }
 
     // =================================================
@@ -146,19 +98,50 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        if (!hasCallLogPermission()) {
+            requestCallLogPermission();
+            return;
+        }
+
         if (!hasOverlayPermission()) {
             requestOverlayPermission();
             return;
         }
 
-        Toast.makeText(
-                this,
-                "Call protection is active",
-                Toast.LENGTH_SHORT
-        ).show();
+        requestCallScreeningRole();
+
+        Toast.makeText(this,
+                "Call Protection Activated",
+                Toast.LENGTH_SHORT).show();
     }
 
-    // ================= PERMISSION CHECKS =================
+    // =================================================
+    // ROLE REQUEST
+    // =================================================
+
+    private void requestCallScreeningRole() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            RoleManager roleManager =
+                    (RoleManager) getSystemService(ROLE_SERVICE);
+
+            if (roleManager != null &&
+                    roleManager.isRoleAvailable(RoleManager.ROLE_CALL_SCREENING) &&
+                    !roleManager.isRoleHeld(RoleManager.ROLE_CALL_SCREENING)) {
+
+                Intent intent =
+                        roleManager.createRequestRoleIntent(
+                                RoleManager.ROLE_CALL_SCREENING);
+
+                startActivityForResult(intent, REQ_ROLE);
+            }
+        }
+    }
+
+    // =================================================
+    // PERMISSION CHECKS
+    // =================================================
 
     private boolean hasPhonePermission() {
         return ContextCompat.checkSelfPermission(
@@ -174,12 +157,21 @@ public class MainActivity extends AppCompatActivity {
         ) == PackageManager.PERMISSION_GRANTED;
     }
 
+    private boolean hasCallLogPermission() {
+        return ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_CALL_LOG
+        ) == PackageManager.PERMISSION_GRANTED;
+    }
+
     private boolean hasOverlayPermission() {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                 || Settings.canDrawOverlays(this);
     }
 
-    // ================= PERMISSION REQUESTS =================
+    // =================================================
+    // PERMISSION REQUESTS
+    // =================================================
 
     private void requestPhonePermission() {
         ActivityCompat.requestPermissions(
@@ -197,11 +189,19 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    private void requestCallLogPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.READ_CALL_LOG},
+                REQ_CALL_LOG
+        );
+    }
+
     private void requestOverlayPermission() {
 
         Toast.makeText(
                 this,
-                "Overlay permission is required to show call warnings",
+                "Overlay permission required for call warnings",
                 Toast.LENGTH_LONG
         ).show();
 
@@ -209,102 +209,13 @@ public class MainActivity extends AppCompatActivity {
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:" + getPackageName())
         );
+
         startActivityForResult(intent, REQ_OVERLAY);
     }
 
     // =================================================
-    // ACTIVITY RESULTS
+    // PERMISSION RESULTS
     // =================================================
-
-    @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data
-    ) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQ_OVERLAY) {
-            if (hasOverlayPermission()) {
-                Toast.makeText(
-                        this,
-                        "Overlay permission enabled",
-                        Toast.LENGTH_SHORT
-                ).show();
-            } else {
-                showPermissionWarning(
-                        "Without overlay permission, Rakshak cannot warn you during calls"
-                );
-            }
-        }
-
-        if (requestCode == FilePickerHelper.PICK_FILE_REQUEST
-                && resultCode == RESULT_OK
-                && data != null) {
-
-            Uri fileUri = data.getData();
-            if (fileUri == null) return;
-
-            Intent intent =
-                    new Intent(this, FileScanActivity.class);
-            intent.setData(fileUri);
-            startActivity(intent);
-        }
-
-        if (requestCode == REQ_PICK_FOLDER
-                && resultCode == RESULT_OK
-                && data != null) {
-
-            try {
-                Uri folderUri = data.getData();
-                if (folderUri == null) return;
-
-                try {
-                    getContentResolver().takePersistableUriPermission(
-                            folderUri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    );
-                } catch (Exception ignored) {}
-
-                new Thread(() -> {
-
-                    FolderScanResult result =
-                            FolderScanner.scanFolder(
-                                    MainActivity.this,
-                                    folderUri
-                            );
-
-                    runOnUiThread(() -> {
-
-                        Intent intent =
-                                new Intent(
-                                        MainActivity.this,
-                                        FolderScanResultActivity.class
-                                );
-
-                        intent.putExtra(
-                                "result",
-                                result.getThreatLevel()
-                                        + " • Files scanned: "
-                                        + result.getTotalFiles()
-                                        + "\n"
-                                        + result.getMessage()
-                        );
-
-                        startActivity(intent);
-                    });
-
-                }).start();
-
-            } catch (Exception e) {
-                Toast.makeText(
-                        this,
-                        "Unable to scan this folder due to system restriction.",
-                        Toast.LENGTH_LONG
-                ).show();
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(
@@ -318,31 +229,17 @@ public class MainActivity extends AppCompatActivity {
                 grantResults
         );
 
-        if (requestCode == REQ_PHONE) {
-            if (isGranted(grantResults)) {
-                startCallProtectionFlow();
-            } else {
-                showPermissionWarning(
-                        "Phone permission is required to detect incoming calls"
-                );
-            }
-        } else if (requestCode == REQ_CONTACTS) {
+        if (isGranted(grantResults)) {
             startCallProtectionFlow();
         }
     }
 
-    // ================= HELPERS =================
+    // =================================================
+    // HELPER
+    // =================================================
 
     private boolean isGranted(int[] results) {
         return results.length > 0
                 && results[0] == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void showPermissionWarning(String message) {
-        Toast.makeText(
-                this,
-                message,
-                Toast.LENGTH_LONG
-        ).show();
     }
 }

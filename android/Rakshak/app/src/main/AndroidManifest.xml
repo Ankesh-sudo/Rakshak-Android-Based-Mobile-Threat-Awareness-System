@@ -4,12 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ================================================= -->
-    <!-- INTERNET PERMISSION (Required for AI Chatbot) -->
+    <!-- INTERNET -->
     <!-- ================================================= -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- ================================================= -->
-    <!-- PACKAGE VISIBILITY (ANDROID 11+) -->
+    <!-- PHONE & CALL PROTECTION -->
+    <!-- ================================================= -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <!-- ================================================= -->
+    <!-- SMS -->
+    <!-- ================================================= -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <!-- ================================================= -->
+    <!-- Overlay & Notifications -->
+    <!-- ================================================= -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- ================================================= -->
+    <!-- STORAGE (SCOPED SAFE) -->
+    <!-- ================================================= -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- ================================================= -->
+    <!-- HARDWARE -->
+    <!-- ================================================= -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
+    <!-- ================================================= -->
+    <!-- PACKAGE VISIBILITY -->
     <!-- ================================================= -->
     <queries>
 
@@ -38,36 +75,6 @@
     </queries>
 
     <!-- ================================================= -->
-    <!-- HARDWARE FEATURES -->
-    <!-- ================================================= -->
-    <uses-feature
-        android:name="android.hardware.telephony"
-        android:required="false" />
-
-    <!-- ================================================= -->
-    <!-- PHONE & SMS PERMISSIONS -->
-    <!-- ================================================= -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <!-- ================================================= -->
-    <!-- STORAGE PERMISSIONS (Scoped Storage Safe) -->
-    <!-- ================================================= -->
-
-    <!-- Android 10–12 -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
-    <!-- Android 13+ -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-
-    <!-- ================================================= -->
     <!-- APPLICATION -->
     <!-- ================================================= -->
 
@@ -82,7 +89,7 @@
         android:usesCleartextTraffic="false"
         tools:targetApi="34">
 
-        <!-- ================= MAIN DASHBOARD ================= -->
+        <!-- ================= MAIN ================= -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -94,25 +101,72 @@
 
         </activity>
 
+        <!-- ================= CALL PROTECTION ================= -->
+
+        <activity
+            android:name=".ui.CallProtectionSettingsActivity"
+            android:exported="false"
+            android:label="Call Protection Settings" />
+
+        <activity
+            android:name=".calls.ui.CallWarningActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Rakshak" />
+
+        <!-- 🔥 Call Screening Service -->
+        <service
+            android:name=".calls.RakshakCallScreeningService"
+            android:permission="android.permission.BIND_SCREENING_SERVICE"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService" />
+            </intent-filter>
+
+        </service>
+
+        <!-- 🔥 WARNING BROADCAST RECEIVER (NEW & IMPORTANT) -->
+        <receiver
+            android:name=".calls.CallWarningReceiver"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="com.rakshak.security.ACTION_SHOW_WARNING" />
+            </intent-filter>
+
+        </receiver>
+
+        <!-- ================= SMS RECEIVER ================= -->
+        <receiver
+            android:name=".receivers.SmsReceiver"
+            android:permission="android.permission.BROADCAST_SMS"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+
+        </receiver>
+
         <!-- ================= CHATBOT ================= -->
         <activity
             android:name=".chatbot.ChatActivity"
             android:exported="false"
             android:label="Rakshak AI Assistant" />
 
-        <!-- ================= PHONE HEALTH ================= -->
+        <!-- ================= HEALTH ================= -->
         <activity
             android:name=".health.HealthDashboardActivity"
             android:exported="false"
             android:label="Phone Health" />
 
-        <!-- ================= THREAT LIST ================= -->
         <activity
             android:name=".health.ThreatListActivity"
             android:exported="false"
             android:label="Detected Threats" />
 
-        <!-- ================= FILE SCAN + SHARE ================= -->
+        <!-- ================= FILE SCAN ================= -->
         <activity
             android:name=".filescanner.FileScanActivity"
             android:exported="true"
@@ -126,12 +180,11 @@
 
         </activity>
 
-        <!-- ================= FILE SCAN RESULTS ================= -->
         <activity
             android:name=".filescanner.FolderScanResultActivity"
             android:exported="false" />
 
-        <!-- ================= PERMISSION TRACKER ================= -->
+        <!-- ================= PERMISSIONS ================= -->
         <activity
             android:name=".permissions.PermissionDashboardActivity"
             android:exported="false" />
@@ -145,7 +198,6 @@
             android:name=".linkscanner.LinkDashboardActivity"
             android:exported="false" />
 
-        <!-- 🔗 SHARE / SELECTED TEXT → RAKSHAK -->
         <activity
             android:name=".linkscanner.LinkScanActivity"
             android:exported="true"
@@ -170,34 +222,11 @@
             android:name=".linkscanner.LinkResultActivity"
             android:exported="false" />
 
-        <!-- ================= RECEIVERS ================= -->
-        <receiver
-            android:name=".receivers.CallReceiver"
-            android:enabled="true"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-
-        </receiver>
-
-        <receiver
-            android:name=".receivers.SmsReceiver"
-            android:permission="android.permission.BROADCAST_SMS"
-            android:enabled="true"
-            android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-
-        </receiver>
-
         <!-- ================= OVERLAY SERVICE ================= -->
         <service
             android:name=".ui.OverlayWarningService"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="phoneCall" />
 
     </application>
 

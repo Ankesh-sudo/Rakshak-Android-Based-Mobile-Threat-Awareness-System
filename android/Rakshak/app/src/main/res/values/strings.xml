@@ -16,7 +16,6 @@
     <string name="uses_permissions">Uses: %1$s</string>
     <string name="risk_label">Risk: %1$s</string>
 
-    <!-- Empty state -->
     <string name="no_apps_found">
         No apps found for this filter.
     </string>
@@ -55,7 +54,7 @@
     <string name="app_icon_desc">Application icon</string>
 
     <!-- ================================================= -->
-    <!-- PERMISSION EXPLANATIONS (USER FRIENDLY) -->
+    <!-- PERMISSION EXPLANATIONS -->
     <!-- ================================================= -->
 
     <string name="explain_camera">
@@ -82,5 +81,61 @@
         Contacts access allows reading your saved contacts.
         May impact privacy if misused.
     </string>
+
+    <!-- ================================================= -->
+    <!-- CALL PROTECTION -->
+    <!-- ================================================= -->
+
+    <string name="call_protection_settings">Call Protection Settings</string>
+
+    <string name="mode_basic">Basic Mode</string>
+    <string name="mode_smart">Smart Mode</string>
+    <string name="mode_extreme">Extreme Mode</string>
+
+    <string name="mode_basic_desc">
+        Only manual block list protection.
+    </string>
+
+    <string name="mode_smart_desc">
+        Detect and warn against suspicious calls automatically.
+    </string>
+
+    <string name="mode_extreme_desc">
+        Block all unknown calls and allow only saved contacts.
+    </string>
+
+    <!-- ================================================= -->
+    <!-- RISK OVERLAY -->
+    <!-- ================================================= -->
+
+    <string name="risk_alert_title">⚠ Risk Alert</string>
+    <string name="unknown_number">Number: Unknown</string>
+    <string name="risk_score_default">Risk Score: 0%%</string>
+    <string name="risk_default_message">Suspicious behavior detected.</string>
+    <string name="dismiss">Dismiss</string>
+
+    <!-- Risk Levels -->
+    <string name="risk_level_high">HIGH RISK CALL</string>
+    <string name="risk_level_medium">SUSPICIOUS CALL</string>
+    <string name="risk_level_low">LOW RISK CALL</string>
+
+    <!-- Risk Reasons -->
+    <string name="reason_hidden_number">Caller number is hidden</string>
+    <string name="reason_not_in_contacts">Caller not saved in contacts</string>
+    <string name="reason_short_number">Unusual number length detected</string>
+    <string name="reason_international">International number detected</string>
+    <string name="reason_repeated_digits">Repeated digit pattern detected</string>
+    <string name="reason_frequent_calls">Multiple calls in short time</string>
+    <string name="reason_short_call">Very short previous call detected</string>
+
+    <!-- ================================================= -->
+    <!-- SMS PROTECTION -->
+    <!-- ================================================= -->
+
+    <string name="sms_suspicious">Suspicious SMS detected</string>
+    <string name="sms_urgent_language">Urgent or threatening language detected</string>
+    <string name="sms_sensitive_request">Sensitive information request detected</string>
+    <string name="sms_suspicious_link">Suspicious link detected</string>
+    <string name="sms_unknown_sender">Unknown sender</string>
 
 </resources>

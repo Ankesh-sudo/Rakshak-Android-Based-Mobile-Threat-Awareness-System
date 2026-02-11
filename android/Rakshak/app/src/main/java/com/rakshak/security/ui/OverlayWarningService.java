@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.rakshak.security.R;
@@ -18,7 +19,6 @@ public class OverlayWarningService extends Service {
     private WindowManager windowManager;
     private View overlayView;
 
-    // 🔒 Prevent duplicate overlays
     private static boolean isOverlayShown = false;
 
     @Override
@@ -37,6 +37,7 @@ public class OverlayWarningService extends Service {
         String level = intent.getStringExtra("risk_level");
         int score = intent.getIntExtra("risk_score", 0);
         String reasons = intent.getStringExtra("risk_reasons");
+        String phoneNumber = intent.getStringExtra("phone_number");
 
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
@@ -54,20 +55,41 @@ public class OverlayWarningService extends Service {
         }
 
         TextView title = overlayView.findViewById(R.id.riskTitle);
+        TextView numberView = overlayView.findViewById(R.id.riskNumber);
+        TextView scoreView = overlayView.findViewById(R.id.riskScore);
         TextView details = overlayView.findViewById(R.id.riskDetails);
+        Button dismissBtn = overlayView.findViewById(R.id.btnDismiss);
 
-        title.setText("⚠️ " + level + " RISK CALL");
-        details.setText("Score: " + score + "\n" + reasons);
+        // -------- TEXT CONTENT --------
+        title.setText("⚠ " + level + " RISK CALL");
 
-        // 🎨 Risk-based UI color
-        if ("HIGH".equals(level)) {
-            overlayView.setBackgroundColor(0xCCB71C1C); // 🔴 Red
-        } else if ("MEDIUM".equals(level)) {
-            overlayView.setBackgroundColor(0xCCF57C00); // 🟠 Orange
+        if (phoneNumber != null) {
+            numberView.setText("Number: " + phoneNumber);
         } else {
-            overlayView.setBackgroundColor(0xCC2E7D32); // 🟢 Green
+            numberView.setText("Unknown Number");
         }
 
+        scoreView.setText("Risk Score: " + score + "%");
+
+        if (reasons != null) {
+            details.setText(reasons);
+        } else {
+            details.setText("Suspicious activity detected.");
+        }
+
+        // -------- COLOR SYSTEM --------
+        if ("HIGH".equals(level)) {
+            overlayView.setBackgroundColor(0xCCB71C1C); // Red
+        } else if ("MEDIUM".equals(level)) {
+            overlayView.setBackgroundColor(0xCCF57C00); // Orange
+        } else {
+            overlayView.setBackgroundColor(0xCC2E7D32); // Green
+        }
+
+        // -------- DISMISS BUTTON --------
+        dismissBtn.setOnClickListener(v -> stopSelf());
+
+        // -------- WINDOW CONFIG --------
         int layoutFlag;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             layoutFlag = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
@@ -88,8 +110,8 @@ public class OverlayWarningService extends Service {
 
         windowManager.addView(overlayView, params);
 
-        // ⏱ Auto-dismiss overlay after 10 seconds (failsafe)
-        overlayView.postDelayed(this::stopSelf, 10_000);
+        // -------- AUTO DISMISS FAILSAFE --------
+        overlayView.postDelayed(this::stopSelf, 12_000);
 
         return START_NOT_STICKY;
     }
@@ -99,7 +121,9 @@ public class OverlayWarningService extends Service {
         super.onDestroy();
 
         if (overlayView != null && windowManager != null) {
-            windowManager.removeView(overlayView);
+            try {
+                windowManager.removeView(overlayView);
+            } catch (Exception ignored) {}
             overlayView = null;
         }
 
