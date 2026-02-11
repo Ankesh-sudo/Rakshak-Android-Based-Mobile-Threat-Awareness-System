@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#0D1117"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- ================= TITLE ================= -->
+    <TextView
+        android:id="@+id/tvThreatTitle"
+        android:text="Detected Threats"
+        android:textSize="20sp"
+        android:textColor="#00FFAA"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- ================= EMPTY STATE ================= -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:text="Scanning..."
+        android:textColor="#AAAAAA"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <!-- ================= RECYCLER VIEW ================= -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerThreats"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

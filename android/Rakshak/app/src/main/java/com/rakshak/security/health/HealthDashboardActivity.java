@@ -2,6 +2,7 @@ package com.rakshak.security.health;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.rakshak.security.R;
+
+import java.util.ArrayList;
 
 public class HealthDashboardActivity extends AppCompatActivity {
 
@@ -61,7 +64,7 @@ public class HealthDashboardActivity extends AppCompatActivity {
         btnScanHealth.setOnClickListener(v -> checkPermissionAndStart());
     }
 
-    // ================= PERMISSION HANDLING =================
+    // ================= PERMISSION =================
 
     private void checkPermissionAndStart() {
 
@@ -76,7 +79,11 @@ public class HealthDashboardActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             return ContextCompat.checkSelfPermission(this,
-                    Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED;
+                    Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED;
         } else {
             return ContextCompat.checkSelfPermission(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -115,14 +122,23 @@ public class HealthDashboardActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            boolean granted = true;
+
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            }
+
+            if (granted) {
                 startPremiumScan();
             }
         }
     }
 
-    // ================= START PREMIUM SCAN =================
+    // ================= START SCAN =================
 
     private void startPremiumScan() {
 
@@ -196,12 +212,26 @@ public class HealthDashboardActivity extends AppCompatActivity {
                 btnScanHealth.setText("Scan Device Health");
 
                 isScanning = false;
+
+                // 🔴 Launch only if real security threats exist
+                if (!fileResult.securityThreats.isEmpty()) {
+
+                    Intent intent =
+                            new Intent(this, ThreatListActivity.class);
+
+                    intent.putExtra(
+                            ThreatListActivity.EXTRA_THREATS,
+                            new ArrayList<>(fileResult.securityThreats)
+                    );
+
+                    startActivity(intent);
+                }
             });
 
         }).start();
     }
 
-    // ================= HEALTH =================
+    // ================= HEALTH SCORE =================
 
     private int calculateRealHealthScore() {
 
@@ -219,24 +249,25 @@ public class HealthDashboardActivity extends AppCompatActivity {
         return HealthScoreEngine.calculateScore(battery, temp, ram, storage);
     }
 
-    // ================= THREAT SCORE =================
+    // ================= THREAT PENALTY =================
 
     private int adjustScoreWithThreats(int baseScore,
                                        MediaStoreScanner.ScanResult result) {
 
-        int penalty = result.suspiciousFiles * 3
-                + result.largeFiles * 1;
+        // Only real security threats affect security score
+        int penalty = result.suspiciousFiles * 3;
 
         return Math.max(baseScore - penalty, 0);
     }
 
-    // ================= FILE SUMMARY =================
+    // ================= SUMMARY =================
 
     private void showFileScanSummary(MediaStoreScanner.ScanResult result) {
 
         String summary =
                 "Files Scanned: " + result.totalFiles + "\n" +
-                        "Suspicious Files: " + result.suspiciousFiles + "\n" +
+                        "Security Threats: " + result.suspiciousFiles + "\n" +
+                        "Hidden Files: " + result.hiddenFiles + "\n" +
                         "Large Files (>100MB): " + result.largeFiles;
 
         tvStorage.setText(summary);
