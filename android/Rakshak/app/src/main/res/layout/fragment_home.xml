@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- ================================================= -->
+        <!-- SYSTEM STATUS CARD -->
+        <!-- ================================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardSystemStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/accent_cyan"
+            app:cardCornerRadius="24dp"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SYSTEM STATUS"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:letterSpacing="0.1" />
+
+                <!-- Main Status -->
+                <TextView
+                    android:id="@+id/txtSystemStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ALL SYSTEMS SECURE"
+                    android:textColor="@color/risk_safe"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Risk Progress -->
+                <ProgressBar
+                    android:id="@+id/progressRisk"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:layout_marginTop="16dp"
+                    android:progress="10"
+                    android:max="100"
+                    android:progressTint="@color/risk_safe"
+                    android:progressBackgroundTint="@color/stroke_default"/>
+
+                <!-- Sub Info -->
+                <TextView
+                    android:id="@+id/txtSubStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Live monitoring active"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================================================= -->
+        <!-- FEATURE GRID -->
+        <!-- ================================================= -->
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:useDefaultMargins="true">
+
+            <!-- AI Console -->
+            <include layout="@layout/item_home_feature"
+                android:id="@+id/featureAIConsole"/>
+
+            <!-- Emergency Mode -->
+            <include layout="@layout/item_home_feature"
+                android:id="@+id/featureEmergency"/>
+
+            <!-- File Scanner -->
+            <include layout="@layout/item_home_feature"
+                android:id="@+id/featureFileScanner"/>
+
+            <!-- Permission Monitor -->
+            <include layout="@layout/item_home_feature"
+                android:id="@+id/featurePermission"/>
+
+        </GridLayout>
+
+    </LinearLayout>
+
+</ScrollView>

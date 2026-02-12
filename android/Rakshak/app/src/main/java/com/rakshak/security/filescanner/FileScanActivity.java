@@ -275,7 +275,7 @@ public class FileScanActivity extends AppCompatActivity {
         return intent.getData();
     }
 
-    
+
     private void showFileMetadataSafe(Uri uri) {
 
         int size = getFileSizeSafe(uri);

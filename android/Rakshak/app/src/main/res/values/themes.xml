@@ -1,9 +1,85 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- ================================================= -->
+    <!-- BASE THEME (Material 3 Dark Cyber) -->
+    <!-- ================================================= -->
+
     <style name="Base.Theme.Rakshak" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/accent_blue</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+
+        <item name="colorSecondary">@color/accent_cyan</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
+
+        <item name="colorTertiary">@color/accent_purple</item>
+
+        <!-- Background -->
+        <item name="android:windowBackground">@color/bg_primary</item>
+
+        <!-- Surface -->
+        <item name="colorSurface">@color/surface_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_elevated</item>
+
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/bg_primary</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Ripple -->
+        <item name="rippleColor">@color/accent_cyan</item>
+
+        <!-- Shapes -->
+        <item name="shapeAppearanceSmallComponent">@style/Shape.Rakshak.Small</item>
+        <item name="shapeAppearanceMediumComponent">@style/Shape.Rakshak.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/Shape.Rakshak.Large</item>
+
+        <!-- Button Style -->
+        <item name="materialButtonStyle">@style/Widget.Rakshak.Button</item>
+
     </style>
 
+
+    <!-- ================================================= -->
+    <!-- MAIN THEME -->
+    <!-- ================================================= -->
+
     <style name="Theme.Rakshak" parent="Base.Theme.Rakshak" />
+
+
+    <!-- ================================================= -->
+    <!-- SHAPE SYSTEM -->
+    <!-- ================================================= -->
+
+    <style name="Shape.Rakshak.Small"
+        parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="Shape.Rakshak.Medium"
+        parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="Shape.Rakshak.Large"
+        parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">28dp</item>
+    </style>
+
+
+    <!-- ================================================= -->
+    <!-- BUTTON STYLE -->
+    <!-- ================================================= -->
+
+    <!-- Correct parent -->
+    <style name="Widget.Rakshak.Button"
+        parent="Widget.Material3.Button">
+
+        <item name="backgroundTint">@color/accent_blue</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="cornerRadius">20dp</item>
+
+    </style>
+
 </resources>

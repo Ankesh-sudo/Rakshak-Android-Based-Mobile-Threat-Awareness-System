@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0E1117">
+    android:background="@color/bg_primary"
+    android:fillViewport="true">
 
     <LinearLayout
         android:id="@+id/main"
@@ -11,52 +13,50 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- ================= APP HEADER ================= -->
+        <!-- ================= HEADER ================= -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rakshak Security"
+            android:text="@string/app_name"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="8dp" />
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="6dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Early warnings. Informed decisions."
+            android:text="@string/app_tagline"
             android:textSize="14sp"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="32dp" />
 
-        <!-- ================= OVERALL SECURITY ================= -->
+        <!-- ================= SECURITY OVERVIEW ================= -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Security Overview"
+            android:text="@string/security_overview"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSecurityDashboard"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Security Dashboard"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/security_dashboard"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRiskHistory"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Risk History"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/risk_history"
             android:layout_marginBottom="24dp" />
 
         <!-- ================= CORE PROTECTION ================= -->
@@ -64,106 +64,110 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Core Protection"
+            android:text="@string/core_protection"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCallProtection"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Call Protection"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/call_protection"
             android:layout_marginBottom="16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLinkScanner"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan a Link"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/scan_link"
             android:layout_marginBottom="24dp" />
 
-        <!-- ================= FILE & FOLDER SECURITY ================= -->
+        <!-- ================= FILE SECURITY ================= -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="File &amp; Folder Security"
+            android:text="@string/file_security"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnScanFile"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan a File"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/scan_file"
             android:layout_marginBottom="16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnScanFolder"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Scan a Folder"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/scan_folder"
             android:layout_marginBottom="24dp" />
 
-        <!-- ================= SECURITY INSIGHTS ================= -->
+        <!-- ================= INSIGHTS ================= -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Security Insights"
+            android:text="@string/security_insights"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPermissionTracker"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Permission Tracker"
-            android:textAllCaps="false"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+            android:text="@string/permission_tracker"
+            android:layout_marginBottom="24dp" />
 
         <!-- ================= UTILITIES ================= -->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Utilities"
+            android:text="@string/utilities"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="#9AA4B2"
+            android:textColor="@color/text_secondary"
             android:layout_marginBottom="12dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnHealthCheck"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Phone Health Check"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/health_check"
             android:layout_marginBottom="16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChatBot"
+            style="@style/Widget.Rakshak.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="AI Assistant"
-            android:textAllCaps="false"
-            android:textSize="18sp"
+            android:text="@string/ai_assistant"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 🔥 EMERGENCY BUTTON (Fixes Your Error) -->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEmergency"
+            style="@style/Widget.Rakshak.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/emergency_mode"
+            android:backgroundTint="@color/accent_red"
             android:layout_marginBottom="24dp" />
 
     </LinearLayout>

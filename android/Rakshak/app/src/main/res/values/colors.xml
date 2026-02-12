@@ -2,69 +2,112 @@
 <resources>
 
     <!-- ================================================= -->
-    <!-- BACKGROUNDS -->
+    <!-- CORE BACKGROUND SYSTEM -->
     <!-- ================================================= -->
 
-    <color name="bg_dark">#0E1117</color>
-    <color name="card_dark">#161B22</color>
+    <!-- Main App Background -->
+    <color name="bg_primary">#050B1A</color>
 
-    <!-- Slightly lighter surface (cards, lists) -->
-    <color name="surface_dark">#1C2128</color>
+    <!-- Secondary Background (Sections) -->
+    <color name="bg_secondary">#0A1224</color>
+
+    <!-- Card / Surface Background -->
+    <color name="surface_primary">#0F1A2E</color>
+
+    <!-- Elevated Surface -->
+    <color name="surface_elevated">#162238</color>
+
 
     <!-- ================================================= -->
-    <!-- TEXT -->
+    <!-- TEXT SYSTEM -->
     <!-- ================================================= -->
 
     <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#9AA4B2</color>
-    <color name="text_disabled">#6B7280</color>
+    <color name="text_secondary">#A0B4D4</color>
+    <color name="text_muted">#5C6B8A</color>
+    <color name="text_disabled">#3E4C63</color>
+
 
     <!-- ================================================= -->
-    <!-- RISK LEVEL COLORS (STAGE 4) -->
+    <!-- CYBER ACCENT COLORS -->
     <!-- ================================================= -->
 
-    <!-- 🔴 HIGH RISK -->
-    <color name="risk_high">#D73A49</color>
+    <color name="accent_blue">#1F66FF</color>
+    <color name="accent_cyan">#00E5FF</color>
+    <color name="accent_purple">#9D8DF1</color>
+    <color name="accent_red">#E53935</color>
+    <color name="accent_orange">#FF7A00</color>
+    <color name="accent_green">#00C853</color>
 
-    <!-- 🟠 CAUTION -->
-    <color name="risk_caution">#E5533D</color>
-
-    <!-- 🟢 SAFE -->
-    <color name="risk_safe">#2EA043</color>
-
-    <!-- ================================================= -->
-    <!-- PERMISSION CHIP STATES (STAGE 4 / 5 READY) -->
-    <!-- ================================================= -->
-
-    <!-- Granted permission -->
-    <color name="permission_granted_bg">#1F6F43</color>
-    <color name="permission_granted_text">#E6FFFA</color>
-
-    <!-- Not granted permission -->
-    <color name="permission_denied_bg">#21262D</color>
-    <color name="permission_denied_text">#9AA4B2</color>
 
     <!-- ================================================= -->
-    <!-- FILTER CHIPS (STAGE 5 READY) -->
+    <!-- RISK LEVEL COLORS -->
     <!-- ================================================= -->
 
-    <color name="filter_chip_bg">#1A1F2A</color>
-    <color name="filter_chip_stroke">#2E3440</color>
-    <color name="filter_chip_selected">#2EA043</color>
-    <color name="filter_chip_ripple">#334155</color>
+    <color name="risk_high">#FF3B3B</color>
+    <color name="risk_caution">#FF9800</color>
+    <color name="risk_safe">#00E676</color>
+
 
     <!-- ================================================= -->
-    <!-- ACCENT / BRAND -->
+    <!-- GLOW EFFECT COLORS -->
     <!-- ================================================= -->
 
-    <color name="brand_primary">#C9B6FF</color>
+    <color name="glow_cyan_start">#3300E5FF</color>
+    <color name="glow_cyan_end">#0000E5FF</color>
+
+    <color name="glow_red_start">#33E53935</color>
+    <color name="glow_red_end">#00E53935</color>
+
+
+    <!-- ================================================= -->
+    <!-- PERMISSION CHIP STATES -->
+    <!-- ================================================= -->
+
+    <color name="permission_granted_bg">#0E3D2E</color>
+    <color name="permission_granted_text">#A5F3D0</color>
+
+    <color name="permission_denied_bg">#1C1F26</color>
+    <color name="permission_denied_text">#8B949E</color>
+
+
+    <!-- ================================================= -->
+    <!-- FILTER CHIPS -->
+    <!-- ================================================= -->
+
+    <color name="filter_chip_bg">#111827</color>
+    <color name="filter_chip_stroke">#1F2937</color>
+    <color name="filter_chip_selected">#1F66FF</color>
+    <color name="filter_chip_ripple">#22304A</color>
+
+
+    <!-- ================================================= -->
+    <!-- ICON STATES -->
+    <!-- ================================================= -->
+
+    <color name="icon_active">#EAF2FF</color>
+    <color name="icon_inactive">#475569</color>
+
+
+    <!-- ================================================= -->
+    <!-- DIVIDERS / BORDERS -->
+    <!-- ================================================= -->
+
+    <color name="divider_subtle">#1E293B</color>
+    <color name="stroke_default">#243247</color>
+
+
+    <!-- ================================================= -->
+    <!-- 🔥 LEGACY COMPATIBILITY COLORS (FIX BUILD ERRORS) -->
+    <!-- ================================================= -->
+
+    <!-- Old background reference -->
+    <color name="bg_dark">#050B1A</color>
+
+    <!-- Old card reference -->
+    <color name="card_dark">#0F1A2E</color>
+
+    <!-- Old brand reference -->
     <color name="brand_secondary">#9D8DF1</color>
-
-    <!-- ================================================= -->
-    <!-- ICON COLORS -->
-    <!-- ================================================= -->
-
-    <color name="icon_active">#E5E7EB</color>
-    <color name="icon_inactive">#6B7280</color>
 
 </resources>

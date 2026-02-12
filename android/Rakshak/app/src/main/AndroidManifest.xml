@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ================================================= -->
-    <!-- INTERNET (For ML Backend Communication) -->
+    <!-- INTERNET (For Local ML Backend / LAN Hosting) -->
     <!-- ================================================= -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -37,6 +37,14 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <!-- ================================================= -->
+    <!-- OPTIONAL FUTURE (Emergency SMS / Location) -->
+    <!-- Uncomment when implemented -->
+    <!--
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    -->
 
     <!-- ================================================= -->
     <!-- HARDWARE -->
@@ -75,6 +83,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rakshak"
         android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="34">
 
         <!-- ================= MAIN ================= -->
@@ -89,23 +98,27 @@
 
         </activity>
 
+        <!-- ================= EMERGENCY ================= -->
+        <activity
+            android:name=".emergency.EmergencyActivity"
+            android:exported="false"
+            android:label="Emergency Mode"
+            android:theme="@style/Theme.Rakshak" />
+
         <!-- ================= SECURITY DASHBOARD ================= -->
         <activity
             android:name=".ui.SecurityDashboardActivity"
-            android:exported="false"
-            android:label="Security Dashboard" />
+            android:exported="false" />
 
         <activity
             android:name=".ui.RiskHistoryActivity"
-            android:exported="false"
-            android:label="Risk History" />
+            android:exported="false" />
 
         <!-- ================= CALL PROTECTION ================= -->
 
         <activity
             android:name=".ui.CallProtectionSettingsActivity"
-            android:exported="false"
-            android:label="Call Protection Settings" />
+            android:exported="false" />
 
         <activity
             android:name=".calls.ui.CallWarningActivity"
@@ -160,8 +173,7 @@
         <activity
             android:name=".linkscanner.LinkScanActivity"
             android:exported="true"
-            android:permission="android.permission.PROCESS_TEXT"
-            android:label="Scan link with Rakshak">
+            android:permission="android.permission.PROCESS_TEXT">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -185,8 +197,7 @@
 
         <activity
             android:name=".filescanner.FileScanActivity"
-            android:exported="true"
-            android:label="Scan with Rakshak">
+            android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

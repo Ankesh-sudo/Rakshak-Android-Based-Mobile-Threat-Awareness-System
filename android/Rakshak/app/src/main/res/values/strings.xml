@@ -6,19 +6,51 @@
     <!-- ================================================= -->
 
     <string name="app_name">Rakshak</string>
+    <string name="app_tagline">Early warnings. Informed decisions.</string>
 
     <!-- ================================================= -->
-    <!-- DASHBOARD -->
+    <!-- MAIN DASHBOARD -->
+    <!-- ================================================= -->
+
+    <string name="security_overview">Security Overview</string>
+    <string name="security_dashboard">Security Dashboard</string>
+    <string name="risk_history">Risk History</string>
+
+    <string name="core_protection">Core Protection</string>
+    <string name="call_protection">Call Protection</string>
+    <string name="scan_link">Scan a Link</string>
+
+    <string name="file_security">File &amp; Folder Security</string>
+    <string name="scan_file">Scan a File</string>
+    <string name="scan_folder">Scan a Folder</string>
+
+    <string name="security_insights">Security Insights</string>
+    <string name="permission_tracker">Permission Tracker</string>
+
+    <string name="utilities">Utilities</string>
+    <string name="health_check">Phone Health Check</string>
+    <string name="ai_assistant">AI Assistant</string>
+
+    <string name="emergency_mode">Emergency Mode</string>
+
+    <!-- ================================================= -->
+    <!-- EMERGENCY -->
+    <!-- ================================================= -->
+
+    <string name="emergency_title">Emergency Mode</string>
+    <string name="emergency_subtitle">Tap to trigger emergency protocol</string>
+    <string name="emergency_activated">Emergency Protocol Activated</string>
+    <string name="sos">SOS</string>
+
+    <!-- ================================================= -->
+    <!-- PERMISSION DASHBOARD -->
     <!-- ================================================= -->
 
     <string name="permission_tracker_title">Permission Tracker</string>
     <string name="no_dangerous_permissions">No dangerous permissions</string>
     <string name="uses_permissions">Uses: %1$s</string>
     <string name="risk_label">Risk: %1$s</string>
-
-    <string name="no_apps_found">
-        No apps found for this filter.
-    </string>
+    <string name="no_apps_found">No apps found for this filter.</string>
 
     <!-- ================================================= -->
     <!-- SYSTEM APP -->
@@ -52,6 +84,7 @@
     <!-- ================================================= -->
 
     <string name="app_icon_desc">Application icon</string>
+    <string name="feature_icon_desc">Feature icon</string>
 
     <!-- ================================================= -->
     <!-- PERMISSION EXPLANATIONS -->
@@ -108,7 +141,7 @@
     <!-- RISK OVERLAY -->
     <!-- ================================================= -->
 
-    <string name="risk_alert_title">⚠ Risk Alert</string>
+    <string name="risk_alert_title">Risk Alert</string>
     <string name="unknown_number">Number: Unknown</string>
     <string name="risk_score_default">Risk Score: 0%%</string>
     <string name="risk_default_message">Suspicious behavior detected.</string>

@@ -20,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.rakshak.security.chatbot.ChatActivity;
+import com.rakshak.security.emergency.EmergencyActivity;
 import com.rakshak.security.filescanner.FilePickerHelper;
 import com.rakshak.security.health.HealthDashboardActivity;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
@@ -29,7 +30,10 @@ import com.rakshak.security.ui.SecurityDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    // ================= REQUEST CODES =================
+    // =================================================
+    // REQUEST CODES
+    // =================================================
+
     private static final int REQ_PHONE = 1001;
     private static final int REQ_CONTACTS = 1002;
     private static final int REQ_CALL_LOG = 1003;
@@ -44,24 +48,27 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        applyEdgeToEdgeInsets();
+        requestNotificationPermissionIfNeeded();
+        setupDashboardButtons();
+    }
+
+    // =================================================
+    // UI SETUP
+    // =================================================
+
+    private void applyEdgeToEdgeInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main),
                 (v, insets) -> {
-                    Insets bars =
-                            insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                    v.setPadding(
-                            bars.left,
-                            bars.top,
-                            bars.right,
-                            bars.bottom
-                    );
+                    Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
                     return insets;
                 }
         );
+    }
 
-        requestNotificationPermissionIfNeeded();
-
-        // ================= DASHBOARD BUTTONS =================
+    private void setupDashboardButtons() {
 
         findViewById(R.id.btnCallProtection)
                 .setOnClickListener(v -> startCallProtectionFlow());
@@ -86,15 +93,18 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, ChatActivity.class)));
 
-        // 🔥 NEW: Security Dashboard
         findViewById(R.id.btnSecurityDashboard)
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, SecurityDashboardActivity.class)));
 
-        // 🔥 NEW: Risk History
         findViewById(R.id.btnRiskHistory)
                 .setOnClickListener(v ->
                         startActivity(new Intent(this, RiskHistoryActivity.class)));
+
+        // 🔥 NEW: Emergency Mode
+        findViewById(R.id.btnEmergency)
+                .setOnClickListener(v ->
+                        startActivity(new Intent(this, EmergencyActivity.class)));
     }
 
     // =================================================
@@ -125,9 +135,11 @@ public class MainActivity extends AppCompatActivity {
 
         requestCallScreeningRole();
 
-        Toast.makeText(this,
-                "Call Protection Activated",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                this,
+                "Rakshak Call Protection Activated 🛡",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     // =================================================
@@ -238,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toast.makeText(
                 this,
-                "Overlay permission required for call warnings",
+                "Overlay permission required for real-time call warnings",
                 Toast.LENGTH_LONG
         ).show();
 
@@ -272,6 +284,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (isGranted(grantResults)) {
             startCallProtectionFlow();
+        } else {
+            Toast.makeText(
+                    this,
+                    "Permission denied. Rakshak protection incomplete.",
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 
