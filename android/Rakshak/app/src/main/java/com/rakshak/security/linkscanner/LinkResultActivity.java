@@ -21,7 +21,7 @@ public class LinkResultActivity extends Activity {
         TextView title = findViewById(R.id.riskTitle);
         TextView urlView = findViewById(R.id.urlText);
         TextView reasonsView = findViewById(R.id.reasonText);
-        TextView metaView = findViewById(R.id.metaText); // NEW (optional TextView)
+        TextView metaView = findViewById(R.id.metaText);
         Button openBtn = findViewById(R.id.openButton);
         Button cancelBtn = findViewById(R.id.cancelButton);
 
@@ -38,7 +38,7 @@ public class LinkResultActivity extends Activity {
         String reasons = intent.getStringExtra("risk_reasons");
 
         int riskScore = intent.getIntExtra("risk_score", 0);
-        int confidence = intent.getIntExtra("confidence", 0);
+        float confidence = intent.getFloatExtra("confidence", 0f);
         double entropy = intent.getDoubleExtra("entropy", 0.0);
         boolean isShortened = intent.getBooleanExtra("is_shortened", false);
         boolean isRedirected = intent.getBooleanExtra("is_redirected", false);
@@ -47,6 +47,9 @@ public class LinkResultActivity extends Activity {
             finish();
             return;
         }
+
+        // Clamp score to 100
+        if (riskScore > 100) riskScore = 100;
 
         // ================= URL DISPLAY =================
         if (!TextUtils.isEmpty(originalUrl)
@@ -67,10 +70,12 @@ public class LinkResultActivity extends Activity {
                         : "No obvious risk indicators detected."
         );
 
-        // ================= META INFO (ADVANCED) =================
+        // ================= META INFO =================
         StringBuilder meta = new StringBuilder();
         meta.append("Risk score: ").append(riskScore).append("/100\n");
-        meta.append("Confidence: ").append(confidence).append("%\n");
+        meta.append("Confidence: ")
+                .append(String.format("%.0f", confidence * 100))
+                .append("%\n");
 
         if (entropy > 0) {
             meta.append("Entropy: ")
@@ -81,6 +86,7 @@ public class LinkResultActivity extends Activity {
         if (isShortened) {
             meta.append("Shortened link detected\n");
         }
+
         if (isRedirected) {
             meta.append("Redirected to another domain\n");
         }
@@ -90,21 +96,23 @@ public class LinkResultActivity extends Activity {
         }
 
         // ================= UI BASED ON RISK =================
-        boolean isSafe = false;
+        if ("HIGH".equals(level)) {
 
-        if ("DANGEROUS".equals(level)) {
             title.setText("🚨 Dangerous Link");
             title.setTextColor(Color.RED);
             openBtn.setText("OPEN ANYWAY");
-        } else if ("SUSPICIOUS".equals(level)) {
+
+        } else if ("MEDIUM".equals(level)) {
+
             title.setText("⚠ Suspicious Link");
             title.setTextColor(Color.rgb(255, 165, 0));
             openBtn.setText("OPEN ANYWAY");
+
         } else {
+
             title.setText("✅ Safe Link");
             title.setTextColor(Color.GREEN);
             openBtn.setText("OPEN LINK");
-            isSafe = true;
         }
 
         // ================= USER ACTION =================
@@ -116,15 +124,13 @@ public class LinkResultActivity extends Activity {
         cancelBtn.setOnClickListener(v -> finish());
     }
 
-    // ================= SAFE BROWSER OPEN =================
     private void openInBrowser(String url) {
         try {
             Intent browserIntent =
                     new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             browserIntent.addCategory(Intent.CATEGORY_BROWSABLE);
             startActivity(browserIntent);
-        } catch (Exception e) {
-            // Never crash a security app
+        } catch (Exception ignored) {
         }
     }
 }
