@@ -7,11 +7,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.rakshak.security.R;
-import com.rakshak.security.calls.ProtectionModeManager;
+import com.rakshak.security.calls.CallProtectionMode;
+import com.rakshak.security.calls.CallSettingsManager;
 
 public class CallProtectionSettingsActivity extends AppCompatActivity {
 
-    Button basicBtn, smartBtn, extremeBtn;
+    private Button basicBtn, smartBtn;
+    private CallSettingsManager settingsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,32 +22,28 @@ public class CallProtectionSettingsActivity extends AppCompatActivity {
 
         basicBtn = findViewById(R.id.btnBasic);
         smartBtn = findViewById(R.id.btnSmart);
-        extremeBtn = findViewById(R.id.btnExtreme);
+
+        settingsManager = new CallSettingsManager(this);
 
         basicBtn.setOnClickListener(v -> {
-            ProtectionModeManager.setMode(
-                    this,
-                    ProtectionModeManager.ProtectionMode.BASIC
-            );
-            Toast.makeText(this, "Basic Protection Enabled", Toast.LENGTH_SHORT).show();
+
+            settingsManager.setMode(CallProtectionMode.ALL_CALLS_ALLOWED);
+
+            Toast.makeText(this,
+                    "Basic Protection Enabled",
+                    Toast.LENGTH_SHORT).show();
+
             finish();
         });
 
         smartBtn.setOnClickListener(v -> {
-            ProtectionModeManager.setMode(
-                    this,
-                    ProtectionModeManager.ProtectionMode.SMART
-            );
-            Toast.makeText(this, "Smart Protection Enabled", Toast.LENGTH_SHORT).show();
-            finish();
-        });
 
-        extremeBtn.setOnClickListener(v -> {
-            ProtectionModeManager.setMode(
-                    this,
-                    ProtectionModeManager.ProtectionMode.EXTREME
-            );
-            Toast.makeText(this, "Extreme Protection Enabled", Toast.LENGTH_SHORT).show();
+            settingsManager.setMode(CallProtectionMode.ALLOW_KNOWN_ONLY);
+
+            Toast.makeText(this,
+                    "Smart Protection Enabled",
+                    Toast.LENGTH_SHORT).show();
+
             finish();
         });
     }

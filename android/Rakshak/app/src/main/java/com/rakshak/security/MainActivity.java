@@ -27,6 +27,7 @@ import com.rakshak.security.filescanner.FolderScanResultActivity;
 import com.rakshak.security.health.HealthDashboardActivity;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
+import com.rakshak.security.ui.CallProtectionSettingsActivity;
 import com.rakshak.security.ui.RiskHistoryActivity;
 import com.rakshak.security.ui.SecurityDashboardActivity;
 
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         setClick(R.id.btnScanFile, v ->
                 FilePickerHelper.pickFile(this));
 
-        // ✅ FIXED Scan Folder
         setClick(R.id.btnScanFolder, v -> openFolderPicker());
 
         setClick(R.id.btnPermissionTracker, v ->
@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
             Uri folderUri = data.getData();
 
-            // 🔥 Simulated Scan Result (Replace later with real scan)
             String scanResult = "SAFE - No malicious files found in selected folder";
 
             Intent intent = new Intent(this, FolderScanResultActivity.class);
@@ -160,9 +159,16 @@ public class MainActivity extends AppCompatActivity {
 
         requestCallScreeningRole();
 
-        Toast.makeText(this,
-                "Rakshak Call Protection Activated 🛡",
-                Toast.LENGTH_SHORT).show();
+        // ✅ OPEN MODE SELECTION SCREEN
+        openCallProtectionSettings();
+    }
+
+    private void openCallProtectionSettings() {
+        Intent intent = new Intent(
+                this,
+                CallProtectionSettingsActivity.class
+        );
+        startActivity(intent);
     }
 
     private void requestCallScreeningRole() {

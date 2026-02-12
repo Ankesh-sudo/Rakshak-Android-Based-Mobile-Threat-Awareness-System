@@ -26,7 +26,10 @@
         android:textColor="@color/text_secondary"
         android:layout_marginBottom="32dp" />
 
+    <!-- =============================== -->
     <!-- Basic Mode -->
+    <!-- =============================== -->
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,11 +55,13 @@
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- =============================== -->
     <!-- Smart Mode -->
+    <!-- =============================== -->
+
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:strokeWidth="1dp"
@@ -80,33 +85,10 @@
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Extreme Mode -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="2dp"
-        app:strokeWidth="0dp"
-        app:cardBackgroundColor="@color/card_dark">
+    <!-- =============================== -->
+    <!-- Current Mode Indicator -->
+    <!-- =============================== -->
 
-        <Button
-            android:id="@+id/btnExtreme"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Extreme Mode"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            android:textColor="@color/risk_high"
-            android:backgroundTint="@android:color/transparent"
-            android:gravity="center_vertical|start"
-            android:paddingStart="20dp"
-            android:drawableStart="@drawable/ic_warning_red"
-            android:drawablePadding="16dp"
-            android:drawableTint="@color/risk_high"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Current status indicator (add in Java later) -->
     <TextView
         android:id="@+id/txtCurrentMode"
         android:layout_width="match_parent"

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.rakshak.security.calls.ProtectionModeManager;
 import com.rakshak.security.calls.engine.detectors.ContactDetector;
 import com.rakshak.security.calls.engine.detectors.CountryCodeDetector;
 import com.rakshak.security.calls.engine.detectors.FrequencyDetector;
@@ -73,55 +72,15 @@ public class CallThreatEngine {
             }
 
             int totalScore = model.getTotalScore();
-            Log.d(TAG, "Raw Total Score: " + totalScore);
-
-            // ===============================
-            // APPLY PROTECTION MODE
-            // ===============================
-
-            ProtectionModeManager.ProtectionMode mode =
-                    ProtectionModeManager.getMode(context);
-
-            Log.d(TAG, "Protection Mode: " + mode.name());
-
-            switch (mode) {
-
-                case BASIC:
-                    totalScore = (int) (totalScore * 0.7);
-                    break;
-
-                case SMART:
-                    break;
-
-                case EXTREME:
-                    totalScore = (int) (totalScore * 1.3);
-                    break;
-            }
-
             totalScore = clamp(totalScore);
-            Log.d(TAG, "Final Adjusted Score: " + totalScore);
+
+            Log.d(TAG, "Final Engine Score: " + totalScore);
 
             // ===============================
-            // DECISION
+            // DECISION (NO MODE LOGIC HERE)
             // ===============================
 
-            CallRiskResult.ThreatLevel level;
-
-            switch (mode) {
-
-                case BASIC:
-                    level = decide(totalScore, 85, 65, 45);
-                    break;
-
-                case EXTREME:
-                    level = decide(totalScore, 60, 45, 25);
-                    break;
-
-                case SMART:
-                default:
-                    level = decide(totalScore, 80, 60, 40);
-                    break;
-            }
+            CallRiskResult.ThreatLevel level = decide(totalScore);
 
             Log.d(TAG, "Final Threat Level: " + level.name());
 
@@ -131,7 +90,6 @@ public class CallThreatEngine {
 
             Log.e(TAG, "Critical engine failure", e);
 
-            // NEVER crash call screening service
             return new CallRiskResult(
                     CallRiskResult.ThreatLevel.SAFE,
                     0
@@ -143,20 +101,15 @@ public class CallThreatEngine {
     // Decision Helper
     // ===============================
 
-    private static CallRiskResult.ThreatLevel decide(
-            int score,
-            int highThreshold,
-            int spamThreshold,
-            int suspiciousThreshold
-    ) {
+    private static CallRiskResult.ThreatLevel decide(int score) {
 
-        if (score >= highThreshold)
+        if (score >= 80)
             return CallRiskResult.ThreatLevel.HIGH_RISK;
 
-        if (score >= spamThreshold)
+        if (score >= 60)
             return CallRiskResult.ThreatLevel.SPAM;
 
-        if (score >= suspiciousThreshold)
+        if (score >= 40)
             return CallRiskResult.ThreatLevel.SUSPICIOUS;
 
         return CallRiskResult.ThreatLevel.SAFE;
