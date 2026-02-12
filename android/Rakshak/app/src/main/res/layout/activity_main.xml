@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
 
         <!-- ================= HEADER ================= -->
         <LinearLayout
@@ -25,6 +25,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/ic_app_logo"
+                android:contentDescription="@string/app_name"
                 app:tint="@color/accent_cyan"
                 android:layout_marginEnd="12dp"/>
 
@@ -38,43 +39,43 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_name"
-                    android:textSize="28sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/text_primary"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_tagline"
                     android:textSize="14sp"
-                    android:textColor="@color/text_secondary" />
+                    android:textColor="@color/text_secondary"/>
             </LinearLayout>
         </LinearLayout>
+
 
         <!-- ================= STATUS CARD ================= -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
             app:cardCornerRadius="24dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/card_dark"
+            app:cardElevation="6dp"
             app:strokeWidth="1dp"
             app:strokeColor="@color/accent_cyan"
-            android:padding="20dp">
+            app:cardBackgroundColor="@color/card_dark">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PROTECTION STATUS"
                     android:textColor="@color/text_secondary"
-                    android:textSize="12sp"
-                    android:letterSpacing="0.1"/>
+                    android:textSize="12sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -83,18 +84,18 @@
                     android:textColor="@color/risk_safe"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_marginTop="6dp"/>
 
                 <ProgressBar
                     android:id="@+id/statusProgress"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="6dp"
+                    android:layout_height="8dp"
                     android:layout_marginTop="16dp"
-                    android:progress="85"
                     android:max="100"
+                    android:progress="85"
                     android:progressTint="@color/accent_cyan"
-                    android:progressBackgroundTint="@color/stroke_default"
-                    style="?android:attr/progressBarStyleHorizontal"/>
+                    android:progressBackgroundTint="@color/stroke_default"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -102,157 +103,172 @@
                     android:text="Real-time protection enabled"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
-                    android:layout_marginTop="8dp"
-                    android:drawablePadding="6dp"
-                    android:drawableStart="@drawable/ic_check_circle"
-                    android:drawableTint="@color/risk_safe"/>
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
+
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ================= SECTIONS WITH BETTER VISUAL HIERARCHY ================= -->
-
-        <!-- Security Overview -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- ================= MENU SECTION CARD ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/security_overview"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/card_dark">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSecurityDashboard"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/security_dashboard"
-            app:icon="@drawable/ic_dashboard"
-            android:layout_marginBottom="12dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRiskHistory"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/risk_history"
-            app:icon="@drawable/ic_history"
-            android:layout_marginBottom="32dp" />
+                <!-- Security Overview -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/security_overview"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="10dp"/>
 
-        <!-- Core Protection -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/core_protection"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSecurityDashboard"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/security_dashboard"
+                    app:icon="@drawable/ic_dashboard"
+                    android:layout_marginBottom="8dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCallProtection"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/call_protection"
-            app:icon="@drawable/ic_call"
-            android:layout_marginBottom="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRiskHistory"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/risk_history"
+                    app:icon="@drawable/ic_history"
+                    android:layout_marginBottom="16dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLinkScanner"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/scan_link"
-            app:icon="@drawable/ic_link"
-            android:layout_marginBottom="32dp" />
+                <!-- Core Protection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/core_protection"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="10dp"/>
 
-        <!-- File Security -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/file_security"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCallProtection"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/call_protection"
+                    app:icon="@drawable/ic_call"
+                    android:layout_marginBottom="8dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnScanFile"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/scan_file"
-            app:icon="@drawable/ic_file"
-            android:layout_marginBottom="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLinkScanner"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/scan_link"
+                    app:icon="@drawable/ic_link"
+                    android:layout_marginBottom="16dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnScanFolder"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/scan_folder"
-            app:icon="@drawable/ic_folder"
-            android:layout_marginBottom="32dp" />
+                <!-- File Security -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/file_security"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="10dp"/>
 
-        <!-- Insights -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/security_insights"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanFile"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/scan_file"
+                    app:icon="@drawable/ic_file"
+                    android:layout_marginBottom="8dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPermissionTracker"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/permission_tracker"
-            app:icon="@drawable/ic_permission"
-            android:layout_marginBottom="32dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScanFolder"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/scan_folder"
+                    app:icon="@drawable/ic_folder"
+                    android:layout_marginBottom="16dp"/>
 
-        <!-- Utilities -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/utilities"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+                <!-- Insights -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/security_insights"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="10dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHealthCheck"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/health_check"
-            app:icon="@drawable/ic_health"
-            android:layout_marginBottom="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPermissionTracker"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/permission_tracker"
+                    app:icon="@drawable/ic_permission"
+                    android:layout_marginBottom="16dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChatBot"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/ai_assistant"
-            app:icon="@drawable/ic_chat"
-            android:layout_marginBottom="24dp" />
+                <!-- Utilities -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/utilities"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="10dp"/>
 
-        <!-- 🔥 EMERGENCY BUTTON (Fixed) -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEmergency"
-            style="@style/Widget.Rakshak.Button.Menu"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/emergency_mode"
-            app:icon="@drawable/ic_emergency"
-            android:backgroundTint="@color/accent_red"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnHealthCheck"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/health_check"
+                    app:icon="@drawable/ic_health"
+                    android:layout_marginBottom="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnChatBot"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/ai_assistant"
+                    app:icon="@drawable/ic_chat"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- Emergency -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEmergency"
+                    style="@style/Widget.Rakshak.Button.Menu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="@string/emergency_mode"
+                    app:icon="@drawable/ic_emergency"
+                    android:backgroundTint="@color/accent_red"
+                    android:textColor="@color/text_primary"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
+
 </ScrollView>
