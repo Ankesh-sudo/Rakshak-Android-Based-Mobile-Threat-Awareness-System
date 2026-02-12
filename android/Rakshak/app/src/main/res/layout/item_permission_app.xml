@@ -1,78 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:background="@color/card_dark">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/card_dark"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/stroke_default">
 
-    <!-- 🟦 App Icon -->
-    <ImageView
-        android:id="@+id/appIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="12dp"
-        android:contentDescription="@string/app_icon_desc" />
-
-    <!-- 🧱 App Info -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <!-- App Name -->
-        <TextView
-            android:id="@+id/appName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <!-- 🟦 App Icon with background -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_icon_round"
+            android:padding="8dp">
 
-        <!-- System App Label (Stage 6.1) -->
-        <TextView
-            android:id="@+id/systemAppLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/system_app_label"
-            android:textSize="11sp"
-            android:textColor="@color/text_secondary"
-            android:visibility="gone"
-            android:layout_marginTop="2dp" />
+            <ImageView
+                android:id="@+id/appIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/app_icon_desc" />
+        </FrameLayout>
 
-        <!-- Package Name -->
-        <TextView
-            android:id="@+id/packageName"
-            android:layout_width="wrap_content"
+        <!-- 🧱 App Info -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="com.example.app"
-            android:textColor="@color/text_secondary"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <!-- Permission Summary -->
-        <TextView
-            android:id="@+id/permissionSummary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_dangerous_permissions"
-            android:textSize="12sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginTop="4dp" />
+            <!-- App Name with risk indicator -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <!-- Risk Label -->
-        <TextView
-            android:id="@+id/riskLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/risk_label"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_marginTop="4dp" />
+                <TextView
+                    android:id="@+id/appName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_alignParentStart="true"/>
+
+                <TextView
+                    android:id="@+id/riskLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/risk_label"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:background="@drawable/bg_risk_pill"
+                    android:textColor="@color/risk_high"
+                    android:layout_alignParentEnd="true"/>
+            </RelativeLayout>
+
+            <!-- System App Label -->
+            <TextView
+                android:id="@+id/systemAppLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/system_app_label"
+                android:textSize="11sp"
+                android:textColor="@color/text_secondary"
+                android:visibility="gone"
+                android:layout_marginTop="2dp" />
+
+            <!-- Package Name -->
+            <TextView
+                android:id="@+id/packageName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="com.example.app"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp" />
+
+            <!-- Permission Summary with icons -->
+            <TextView
+                android:id="@+id/permissionSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_dangerous_permissions"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:drawablePadding="6dp"
+                android:drawableStart="@drawable/ic_shield_small"
+                android:drawableTint="@color/risk_safe"
+                android:layout_marginTop="6dp" />
+
+        </LinearLayout>
+
+        <!-- Arrow indicator -->
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/text_secondary"
+            android:layout_marginStart="8dp"/>
 
     </LinearLayout>
-
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

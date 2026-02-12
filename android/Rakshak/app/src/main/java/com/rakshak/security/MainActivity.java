@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.rakshak.security.chatbot.ChatActivity;
 import com.rakshak.security.emergency.EmergencyActivity;
 import com.rakshak.security.filescanner.FilePickerHelper;
+import com.rakshak.security.filescanner.FolderScanResultActivity;
 import com.rakshak.security.health.HealthDashboardActivity;
 import com.rakshak.security.linkscanner.LinkDashboardActivity;
 import com.rakshak.security.permissions.PermissionDashboardActivity;
@@ -30,10 +32,7 @@ import com.rakshak.security.ui.SecurityDashboardActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    // =================================================
-    // REQUEST CODES
-    // =================================================
-
+    private static final int REQ_FOLDER_PICK = 2001;
     private static final int REQ_PHONE = 1001;
     private static final int REQ_CONTACTS = 1002;
     private static final int REQ_CALL_LOG = 1003;
@@ -53,58 +52,84 @@ public class MainActivity extends AppCompatActivity {
         setupDashboardButtons();
     }
 
-    // =================================================
-    // UI SETUP
-    // =================================================
-
     private void applyEdgeToEdgeInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(
-                findViewById(R.id.main),
-                (v, insets) -> {
-                    Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                    v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-                    return insets;
-                }
-        );
+        View mainView = findViewById(R.id.main);
+        if (mainView != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(
+                    mainView,
+                    (v, insets) -> {
+                        Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                        v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+                        return insets;
+                    }
+            );
+        }
     }
 
     private void setupDashboardButtons() {
 
-        findViewById(R.id.btnCallProtection)
-                .setOnClickListener(v -> startCallProtectionFlow());
+        setClick(R.id.btnCallProtection, v -> startCallProtectionFlow());
 
-        findViewById(R.id.btnLinkScanner)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, LinkDashboardActivity.class)));
+        setClick(R.id.btnLinkScanner, v ->
+                startActivity(new Intent(this, LinkDashboardActivity.class)));
 
-        findViewById(R.id.btnScanFile)
-                .setOnClickListener(v ->
-                        FilePickerHelper.pickFile(this));
+        setClick(R.id.btnScanFile, v ->
+                FilePickerHelper.pickFile(this));
 
-        findViewById(R.id.btnPermissionTracker)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, PermissionDashboardActivity.class)));
+        // ✅ FIXED Scan Folder
+        setClick(R.id.btnScanFolder, v -> openFolderPicker());
 
-        findViewById(R.id.btnHealthCheck)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, HealthDashboardActivity.class)));
+        setClick(R.id.btnPermissionTracker, v ->
+                startActivity(new Intent(this, PermissionDashboardActivity.class)));
 
-        findViewById(R.id.btnChatBot)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, ChatActivity.class)));
+        setClick(R.id.btnHealthCheck, v ->
+                startActivity(new Intent(this, HealthDashboardActivity.class)));
 
-        findViewById(R.id.btnSecurityDashboard)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, SecurityDashboardActivity.class)));
+        setClick(R.id.btnChatBot, v ->
+                startActivity(new Intent(this, ChatActivity.class)));
 
-        findViewById(R.id.btnRiskHistory)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, RiskHistoryActivity.class)));
+        setClick(R.id.btnSecurityDashboard, v ->
+                startActivity(new Intent(this, SecurityDashboardActivity.class)));
 
-        // 🔥 NEW: Emergency Mode
-        findViewById(R.id.btnEmergency)
-                .setOnClickListener(v ->
-                        startActivity(new Intent(this, EmergencyActivity.class)));
+        setClick(R.id.btnRiskHistory, v ->
+                startActivity(new Intent(this, RiskHistoryActivity.class)));
+
+        setClick(R.id.btnEmergency, v ->
+                startActivity(new Intent(this, EmergencyActivity.class)));
+    }
+
+    private void setClick(int id, View.OnClickListener listener) {
+        View view = findViewById(id);
+        if (view != null) {
+            view.setOnClickListener(listener);
+        }
+    }
+
+    // =================================================
+    // FOLDER PICKER
+    // =================================================
+
+    private void openFolderPicker() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        startActivityForResult(intent, REQ_FOLDER_PICK);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQ_FOLDER_PICK && resultCode == RESULT_OK && data != null) {
+
+            Uri folderUri = data.getData();
+
+            // 🔥 Simulated Scan Result (Replace later with real scan)
+            String scanResult = "SAFE - No malicious files found in selected folder";
+
+            Intent intent = new Intent(this, FolderScanResultActivity.class);
+            intent.putExtra("result", scanResult);
+            intent.putExtra("folderUri", folderUri.toString());
+            startActivity(intent);
+        }
     }
 
     // =================================================
@@ -135,19 +160,12 @@ public class MainActivity extends AppCompatActivity {
 
         requestCallScreeningRole();
 
-        Toast.makeText(
-                this,
+        Toast.makeText(this,
                 "Rakshak Call Protection Activated 🛡",
-                Toast.LENGTH_SHORT
-        ).show();
+                Toast.LENGTH_SHORT).show();
     }
 
-    // =================================================
-    // ROLE REQUEST
-    // =================================================
-
     private void requestCallScreeningRole() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
 
             RoleManager roleManager =
@@ -166,12 +184,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // =================================================
-    // NOTIFICATION PERMISSION (Android 13+)
-    // =================================================
-
     private void requestNotificationPermissionIfNeeded() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
             if (ContextCompat.checkSelfPermission(
@@ -187,10 +200,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-    // =================================================
-    // PERMISSION CHECKS
-    // =================================================
 
     private boolean hasPhonePermission() {
         return ContextCompat.checkSelfPermission(
@@ -218,10 +227,6 @@ public class MainActivity extends AppCompatActivity {
                 || Settings.canDrawOverlays(this);
     }
 
-    // =================================================
-    // PERMISSION REQUESTS
-    // =================================================
-
     private void requestPhonePermission() {
         ActivityCompat.requestPermissions(
                 this,
@@ -247,12 +252,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestOverlayPermission() {
-
-        Toast.makeText(
-                this,
+        Toast.makeText(this,
                 "Overlay permission required for real-time call warnings",
-                Toast.LENGTH_LONG
-        ).show();
+                Toast.LENGTH_LONG).show();
 
         Intent intent = new Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -261,10 +263,6 @@ public class MainActivity extends AppCompatActivity {
 
         startActivityForResult(intent, REQ_OVERLAY);
     }
-
-    // =================================================
-    // PERMISSION RESULTS
-    // =================================================
 
     @Override
     public void onRequestPermissionsResult(
@@ -278,27 +276,15 @@ public class MainActivity extends AppCompatActivity {
                 grantResults
         );
 
-        if (requestCode == REQ_NOTIFICATION) {
-            return;
-        }
+        if (requestCode == REQ_NOTIFICATION) return;
 
-        if (isGranted(grantResults)) {
+        if (grantResults.length > 0 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startCallProtectionFlow();
         } else {
-            Toast.makeText(
-                    this,
+            Toast.makeText(this,
                     "Permission denied. Rakshak protection incomplete.",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // =================================================
-    // HELPER
-    // =================================================
-
-    private boolean isGranted(int[] results) {
-        return results.length > 0
-                && results[0] == PackageManager.PERMISSION_GRANTED;
     }
 }

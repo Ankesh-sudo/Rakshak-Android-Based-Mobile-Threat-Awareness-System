@@ -1,33 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:fitsSystemWindows="true">
 
+    <!-- Chat Header -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarChat"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/bg_primary"
+        app:title="AI Assistant"
+        app:titleTextColor="@color/text_primary"
+        app:navigationIcon="@drawable/ic_back"
+        app:navigationContentDescription="Back"
+        app:titleTextAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+    <!-- Chat Messages -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewChat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:padding="12dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"/>
 
-    <LinearLayout
+    <!-- Input Area with Material Design -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_margin="12dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/card_dark"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/stroke_default">
 
-        <EditText
-            android:id="@+id/editTextMessage"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Type your message"/>
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:gravity="center_vertical">
 
-        <ImageButton
-            android:id="@+id/buttonSend"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_send"/>
-    </LinearLayout>
+            <!-- Attachment Button (Optional) -->
+            <ImageButton
+                android:id="@+id/btnAttachment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_attach"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_secondary"
+                android:visibility="gone"/>
+
+            <EditText
+                android:id="@+id/editTextMessage"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Type your message..."
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_secondary"
+                android:background="@null"
+                android:maxLines="4"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="16dp"
+                android:textSize="15sp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSend"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:icon="@drawable/ic_send"
+                android:iconTint="@color/bg_primary"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:backgroundTint="@color/accent_cyan"
+                app:cornerRadius="24dp"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

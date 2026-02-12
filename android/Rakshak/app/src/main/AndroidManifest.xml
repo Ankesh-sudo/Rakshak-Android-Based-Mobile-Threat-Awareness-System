@@ -235,7 +235,8 @@
 
         <activity
             android:name=".chatbot.ChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- ================= OVERLAY SERVICE ================= -->
 

@@ -29,21 +29,39 @@ public class FolderScanResultActivity extends AppCompatActivity {
         Button btnScanAnother = findViewById(R.id.btnScanAnother);
         Button btnBackHome = findViewById(R.id.btnBackHome);
 
-        // Get result text from intent
-        String resultText = getIntent().getStringExtra("result");
+        // ===============================
+        // SAFELY GET RESULT FROM INTENT
+        // ===============================
 
-        if (resultText == null) {
-            showError();
+        Intent intent = getIntent();
+
+        if (intent == null || !intent.hasExtra("result")) {
+            // No result passed → close screen silently
+            finish();
             return;
         }
 
-        // Parse threat level from text
+        String resultText = intent.getStringExtra("result");
+
+        if (resultText == null || resultText.trim().isEmpty()) {
+            finish();
+            return;
+        }
+
+        // ===============================
+        // PARSE THREAT LEVEL
+        // ===============================
+
+        resultText = resultText.trim().toUpperCase();
+
         if (resultText.startsWith("SAFE")) {
             txtRiskLevel.setText("SAFE");
             riskCard.setBackgroundResource(R.drawable.bg_risk_safe);
+
         } else if (resultText.startsWith("MALICIOUS")) {
             txtRiskLevel.setText("MALICIOUS");
             riskCard.setBackgroundResource(R.drawable.bg_risk_high);
+
         } else {
             txtRiskLevel.setText("SUSPICIOUS");
             riskCard.setBackgroundResource(R.drawable.bg_risk_caution);
@@ -51,27 +69,25 @@ public class FolderScanResultActivity extends AppCompatActivity {
 
         txtRiskDescription.setText(resultText);
 
-        // Actions
+        // ===============================
+        // BUTTON ACTIONS
+        // ===============================
+
         btnScanAnother.setOnClickListener(v -> finish());
 
         btnBackHome.setOnClickListener(v -> {
-            Intent intent =
-                    new Intent(
-                            FolderScanResultActivity.this,
-                            MainActivity.class
-                    );
-            intent.setFlags(
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                            Intent.FLAG_ACTIVITY_NEW_TASK
+            Intent homeIntent = new Intent(
+                    FolderScanResultActivity.this,
+                    MainActivity.class
             );
-            startActivity(intent);
+
+            homeIntent.setFlags(
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP
+            );
+
+            startActivity(homeIntent);
             finish();
         });
-    }
-
-    private void showError() {
-        txtRiskLevel.setText("ERROR");
-        txtRiskDescription.setText("Unable to display scan result.");
-        riskCard.setBackgroundResource(R.drawable.bg_risk_caution);
     }
 }

@@ -109,5 +109,8 @@
 
     <!-- Old brand reference -->
     <color name="brand_secondary">#9D8DF1</color>
+    <color name="text_secondary_hint">#8899B8</color>
+    <color name="risk_safe_bg">#0F2A1E</color>
+
 
 </resources>

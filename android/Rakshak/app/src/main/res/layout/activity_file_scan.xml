@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0E1117">
+    android:background="@color/bg_primary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,87 +11,182 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- HEADER -->
-        <TextView
-            android:id="@+id/txtScanTitle"
-            android:layout_width="wrap_content"
+        <!-- HEADER with back button -->
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="File Scan Result"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
+            android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/txtFilePath"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selected file"
-            android:textSize="12sp"
-            android:textColor="#9AA4B2"
-            android:layout_marginBottom="4dp" />
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_secondary"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"/>
 
-        <TextView
-            android:id="@+id/txtFileMeta"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/txtScanTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="File Scan Result"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+        <!-- File Info Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Type: UNKNOWN • Size: 0 KB"
-            android:textSize="12sp"
-            android:textColor="#9AA4B2"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/card_dark"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_file_generic"
+                    app:tint="@color/accent_blue"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:id="@+id/txtFilePath"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selected file"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/txtFileMeta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Type: UNKNOWN • Size: 0 KB"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- PROGRESS -->
-        <ProgressBar
-            android:id="@+id/scanProgress"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:indeterminate="true"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="24dp">
 
-        <!-- RISK CARD -->
-        <LinearLayout
+            <ProgressBar
+                android:id="@+id/scanProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminateTint="@color/accent_cyan"
+                android:indeterminate="true" />
+
+            <TextView
+                android:id="@+id/txtScanningStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Scanning file..."
+                android:textColor="@color/accent_cyan"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:layout_marginStart="56dp"/>
+        </FrameLayout>
+
+        <!-- RISK CARD with dynamic background (keep ID) -->
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/riskCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp"
-            android:background="@drawable/bg_risk_safe"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            android:backgroundTint="@color/risk_safe_bg">
 
-            <TextView
-                android:id="@+id/txtRiskLevel"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SAFE"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF" />
+                android:orientation="vertical"
+                android:padding="24dp">
 
-            <TextView
-                android:id="@+id/txtRiskDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No threats detected."
-                android:textSize="14sp"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-        <!-- ACTIONS -->
-        <Button
+                    <ImageView
+                        android:id="@+id/imgRiskIcon"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_shield_check"
+                        app:tint="@color/risk_safe"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:id="@+id/txtRiskLevel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SAFE"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/risk_safe" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtRiskDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No threats detected. This file appears safe."
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"
+                    android:lineSpacingExtra="2dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ACTIONS - Keep exact IDs but improve styling -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnScanAnother"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="Scan Another File"
             android:textAllCaps="false"
-            android:layout_marginBottom="12dp" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            app:cornerRadius="28dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/accent_cyan"
+            app:strokeWidth="2dp"
+            android:textColor="@color/accent_cyan"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBackHome"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:text="Back to Dashboard"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:backgroundTint="@color/card_dark"
+            app:cornerRadius="28dp"
+            android:textColor="@color/text_primary"
+            app:icon="@drawable/ic_home"
+            app:iconGravity="textStart"/>
 
     </LinearLayout>
 </ScrollView>
