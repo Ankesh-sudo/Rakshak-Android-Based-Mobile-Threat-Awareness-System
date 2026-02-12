@@ -15,12 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.rakshak.security.MainActivity;
 import com.rakshak.security.R;
+import com.rakshak.security.core.ml.CloudFileClassifier;
 
 import java.util.ArrayList;
 
 public class FileScanActivity extends AppCompatActivity {
 
-    // ================= UI =================
     private TextView txtRiskLevel;
     private TextView txtRiskDescription;
     private TextView txtFilePath;
@@ -33,7 +33,6 @@ public class FileScanActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_scan);
 
-        // ================= VIEW BINDING =================
         txtRiskLevel = findViewById(R.id.txtRiskLevel);
         txtRiskDescription = findViewById(R.id.txtRiskDescription);
         txtFilePath = findViewById(R.id.txtFilePath);
@@ -44,137 +43,248 @@ public class FileScanActivity extends AppCompatActivity {
         Button btnScanAnother = findViewById(R.id.btnScanAnother);
         Button btnBackHome = findViewById(R.id.btnBackHome);
 
-        // ================= GET FILE (NORMAL + SHARE) =================
-        Uri fileUri = extractIncomingFile();
+        final Uri fileUri = extractIncomingFile();
 
         if (fileUri == null) {
             showErrorState();
             return;
         }
 
-        // Persist permission if shared
-        try {
-            getContentResolver().takePersistableUriPermission(
-                    fileUri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-            );
-        } catch (Exception ignored) {}
-
         txtFilePath.setText(getFileNameSafe(fileUri));
         showFileMetadataSafe(fileUri);
 
-        // ================= SCAN FILE (BACKGROUND THREAD) =================
         scanProgress.setVisibility(View.VISIBLE);
 
         new Thread(() -> {
 
-            FileScanResult result;
+            // ===============================
+            // HEURISTIC SCAN
+            // ===============================
+
+            FileScanResult tempResult;
 
             try {
-                result = UniversalScanEngine.scan(
+                tempResult = UniversalScanEngine.scan(
                         FileScanActivity.this,
                         fileUri
                 );
             } catch (Exception e) {
-                result = new FileScanResult(
+                tempResult = new FileScanResult(
                         FileScanResult.ThreatLevel.SUSPICIOUS,
-                        "Scan failed. File may be unreadable."
+                        "Scan failed. File unreadable."
                 );
             }
 
-            FileScanResult finalResult = result;
+            final FileScanResult heuristicResult = tempResult;
+            final int baseScore = convertThreatToScore(
+                    heuristicResult.getThreatLevel()
+            );
 
-            runOnUiThread(() -> {
-                scanProgress.setVisibility(View.GONE);
-                updateUI(finalResult);
+            // ===============================
+            // FEATURE EXTRACTION FOR ML
+            // ===============================
 
-                // Save scan history (local)
-                ScanHistoryManager.save(
-                        FileScanActivity.this,
-                        getFileNameSafe(fileUri),
-                        finalResult.getThreatLevel().name()
-                );
-            });
+            int fileSize = getFileSizeSafe(fileUri);
+
+            double entropy =
+                    FileFeatureUtil.calculateEntropyFromUri(
+                            FileScanActivity.this,
+                            fileUri
+                    );
+
+            String fileName =
+                    getFileNameSafe(fileUri).toLowerCase();
+
+            int executable =
+                    fileName.endsWith(".exe") ? 1 : 0;
+
+            int suspiciousExt =
+                    fileName.endsWith(".apk") ||
+                            fileName.endsWith(".exe") ||
+                            fileName.endsWith(".bat") ? 1 : 0;
+
+            int hidden =
+                    fileName.startsWith(".") ? 1 : 0;
+
+            int doubleExtension =
+                    fileName.split("\\.").length > 2 ? 1 : 0;
+
+            int suspiciousName =
+                    fileName.contains("crack") ||
+                            fileName.contains("patch") ||
+                            fileName.contains("keygen") ? 1 : 0;
+
+            // ===============================
+            // CALL ML BACKEND
+            // ===============================
+
+            CloudFileClassifier.predictFile(
+                    fileSize,
+                    entropy,
+                    executable,
+                    suspiciousExt,
+                    hidden,
+                    doubleExtension,
+                    suspiciousName,
+                    new CloudFileClassifier.FilePredictionCallback() {
+
+                        @Override
+                        public void onResult(float probability) {
+
+                            int finalScore = baseScore;
+
+                            if (probability > 0.9f) {
+                                finalScore += 60;
+                            } else if (probability > 0.75f) {
+                                finalScore += 40;
+                            } else if (probability > 0.6f) {
+                                finalScore += 20;
+                            }
+
+                            updateFinalUI(
+                                    finalScore,
+                                    heuristicResult.getDescription()
+                            );
+                        }
+
+                        @Override
+                        public void onError(String error) {
+
+                            updateFinalUI(
+                                    baseScore,
+                                    heuristicResult.getDescription()
+                            );
+                        }
+                    }
+            );
 
         }).start();
 
-        // ================= BUTTON ACTIONS =================
         btnScanAnother.setOnClickListener(v -> finish());
 
         btnBackHome.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                            Intent.FLAG_ACTIVITY_NEW_TASK
-            );
+            Intent intent =
+                    new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
         });
     }
 
     // =================================================
-    // HANDLE SHARE + NORMAL INTENTS
+    // FINAL UI UPDATE
     // =================================================
 
-    private Uri extractIncomingFile() {
+    private void updateFinalUI(int finalScore,
+                               String description) {
 
-        Intent intent = getIntent();
+        runOnUiThread(() -> {
 
-        if (intent == null) return null;
+            scanProgress.setVisibility(View.GONE);
 
-        // Single file share
-        if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            return intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        }
+            FileScanResult.ThreatLevel level;
 
-        // Multiple file share (take first safely)
-        if (Intent.ACTION_SEND_MULTIPLE.equals(intent.getAction())) {
-            ArrayList<Uri> uris =
-                    intent.getParcelableArrayListExtra(
-                            Intent.EXTRA_STREAM
-                    );
-            if (uris != null && !uris.isEmpty()) {
-                return uris.get(0);
+            if (finalScore >= 80) {
+                level = FileScanResult.ThreatLevel.MALICIOUS;
+            } else if (finalScore >= 50) {
+                level = FileScanResult.ThreatLevel.SUSPICIOUS;
+            } else {
+                level = FileScanResult.ThreatLevel.SAFE;
             }
-        }
 
-        // Normal in-app scan
-        return intent.getData();
+            txtRiskLevel.setText(level.name());
+            txtRiskDescription.setText(description);
+
+            switch (level) {
+                case SAFE:
+                    riskCard.setBackgroundResource(
+                            R.drawable.bg_risk_safe);
+                    break;
+
+                case SUSPICIOUS:
+                    riskCard.setBackgroundResource(
+                            R.drawable.bg_risk_caution);
+                    break;
+
+                case MALICIOUS:
+                    riskCard.setBackgroundResource(
+                            R.drawable.bg_risk_high);
+                    break;
+            }
+        });
     }
 
     // =================================================
-    // FILE METADATA (OEM SAFE)
+    // UTIL METHODS
     // =================================================
 
-    private void showFileMetadataSafe(Uri uri) {
+    private int convertThreatToScore(
+            FileScanResult.ThreatLevel level) {
+
+        switch (level) {
+            case MALICIOUS: return 80;
+            case SUSPICIOUS: return 50;
+            default: return 20;
+        }
+    }
+
+    private int getFileSizeSafe(Uri uri) {
 
         long size = 0;
 
         try (Cursor cursor =
                      getContentResolver().query(
-                             uri, null, null, null, null
-                     )) {
+                             uri, null, null, null, null)) {
 
             if (cursor != null && cursor.moveToFirst()) {
                 int sizeIndex =
-                        cursor.getColumnIndex(OpenableColumns.SIZE);
+                        cursor.getColumnIndex(
+                                OpenableColumns.SIZE);
                 if (sizeIndex != -1) {
                     size = cursor.getLong(sizeIndex);
                 }
             }
         } catch (Exception ignored) {}
 
+        return (int) size;
+    }
+
+    private Uri extractIncomingFile() {
+
+        Intent intent = getIntent();
+        if (intent == null) return null;
+
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            return intent.getParcelableExtra(
+                    Intent.EXTRA_STREAM);
+        }
+
+        if (Intent.ACTION_SEND_MULTIPLE.equals(
+                intent.getAction())) {
+
+            ArrayList<Uri> uris =
+                    intent.getParcelableArrayListExtra(
+                            Intent.EXTRA_STREAM);
+
+            if (uris != null && !uris.isEmpty()) {
+                return uris.get(0);
+            }
+        }
+
+        return intent.getData();
+    }
+
+    private void showFileMetadataSafe(Uri uri) {
+
+        int size = getFileSizeSafe(uri);
+
         String sizeText =
                 size > 1024 * 1024
                         ? (size / (1024 * 1024)) + " MB"
                         : (size / 1024) + " KB";
 
-        FileTypeDetector.FileType type =
-                FileTypeDetector.detect(this, uri);
-
-        txtFileMeta.setText(
-                "Type: " + type.name() + " • Size: " + sizeText
-        );
+        txtFileMeta.setText("Size: " + sizeText);
     }
 
     private String getFileNameSafe(Uri uri) {
@@ -183,14 +293,13 @@ public class FileScanActivity extends AppCompatActivity {
 
         try (Cursor cursor =
                      getContentResolver().query(
-                             uri, null, null, null, null
-                     )) {
+                             uri, null, null, null, null)) {
 
             if (cursor != null && cursor.moveToFirst()) {
                 int nameIndex =
                         cursor.getColumnIndex(
-                                OpenableColumns.DISPLAY_NAME
-                        );
+                                OpenableColumns.DISPLAY_NAME);
+
                 if (nameIndex != -1) {
                     name = cursor.getString(nameIndex);
                 }
@@ -200,47 +309,11 @@ public class FileScanActivity extends AppCompatActivity {
         return name;
     }
 
-    // =================================================
-    // UI UPDATE BASED ON RISK
-    // =================================================
-
-    private void updateUI(FileScanResult result) {
-
-        txtRiskLevel.setText(result.getThreatLevel().name());
-        txtRiskDescription.setText(result.getDescription());
-
-        switch (result.getThreatLevel()) {
-            case SAFE:
-                riskCard.setBackgroundResource(
-                        R.drawable.bg_risk_safe
-                );
-                break;
-
-            case SUSPICIOUS:
-                riskCard.setBackgroundResource(
-                        R.drawable.bg_risk_caution
-                );
-                break;
-
-            case MALICIOUS:
-                riskCard.setBackgroundResource(
-                        R.drawable.bg_risk_high
-                );
-                break;
-        }
-    }
-
-    // =================================================
-    // ERROR STATE
-    // =================================================
-
     private void showErrorState() {
         txtRiskLevel.setText("ERROR");
         txtRiskDescription.setText(
-                "Unable to analyze the selected file."
-        );
+                "Unable to analyze selected file.");
         riskCard.setBackgroundResource(
-                R.drawable.bg_risk_caution
-        );
+                R.drawable.bg_risk_caution);
     }
 }
